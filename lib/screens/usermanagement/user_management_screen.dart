@@ -125,43 +125,60 @@ class _UserManagementScreenState extends State<UserManagementScreen>
                         return name.contains(_searchTerm);
                       }).toList();
 
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: filteredDocs.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          var userData = filteredDocs[index].data()
-                              as Map<String, dynamic>;
-                          bool isHovered = false;
-                          return StatefulBuilder(
-                            builder: (context, setState) {
-                              return InkWell(
-                                onTap: () {
-                                  // Handle tap
-                                },
-                                onHover: (hovering) {
-                                  setState(() {
-                                    isHovered = hovering;
-                                  });
-                                },
-                                child: Container(
-                                  color: isHovered
-                                      ? Colors.grey[300]
-                                      : Colors.transparent,
-                                  child: ListTile(
-                                    leading: const CircleAvatar(
-                                      backgroundColor: Colors.grey,
-                                      backgroundImage: AssetImage(
-                                          'assets/images/profile.jpg'),
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text(
+                              'Total Strength: ${filteredDocs.length}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: filteredDocs.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              var userData = filteredDocs[index].data()
+                                  as Map<String, dynamic>;
+                              bool isHovered = false;
+                              return StatefulBuilder(
+                                builder: (context, setState) {
+                                  return InkWell(
+                                    onTap: () {
+                                      // Handle tap
+                                    },
+                                    onHover: (hovering) {
+                                      setState(() {
+                                        isHovered = hovering;
+                                      });
+                                    },
+                                    child: Container(
+                                      color: isHovered
+                                          ? Colors.grey[300]
+                                          : Colors.transparent,
+                                      child: ListTile(
+                                        leading: const CircleAvatar(
+                                          backgroundColor: Colors.grey,
+                                          backgroundImage: AssetImage(
+                                              'assets/images/profile.jpg'),
+                                        ),
+                                        title:
+                                            Text(userData['name'] ?? "No Name"),
+                                        subtitle: Text(
+                                            userData['employeeType'] ??
+                                                "No Department"),
+                                      ),
                                     ),
-                                    title: Text(userData['name'] ?? "No Name"),
-                                    subtitle: Text(userData['employeeType'] ??
-                                        "No Department"),
-                                  ),
-                                ),
+                                  );
+                                },
                               );
                             },
-                          );
-                        },
+                          ),
+                        ],
                       );
                     },
                   ),

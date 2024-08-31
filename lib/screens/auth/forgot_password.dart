@@ -165,8 +165,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 style: TextStyle(
                   color: _errorMessage.contains('link has been sent') ||
                           _errorMessage.contains('No user found')
-                      ? Colors.red
-                      : Colors.green,
+                      ? Colors.green
+                      : Colors.red,
                 ),
                 textAlign: TextAlign.center,
               ),
