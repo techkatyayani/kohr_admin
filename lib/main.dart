@@ -1,12 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:kohr_admin/colors.dart';
 import 'package:kohr_admin/dashboard_screen.dart';
 import 'package:kohr_admin/firebase_options.dart';
 import 'package:kohr_admin/screens/auth/auth_handler.dart';
 import 'package:kohr_admin/screens/auth/forgot_password.dart';
 import 'package:kohr_admin/screens/auth/login_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:kohr_admin/screens/usermanagement/add_user.dart';
+import 'package:kohr_admin/screens/usermanagement/user_management_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,18 +24,23 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'KOHR Admin',
+      title: 'Kohr Admin',
       theme: ThemeData(
         fontFamily: 'Sora',
         colorScheme: ColorScheme.fromSeed(
-            seedColor: AppColors.primaryBlue, primary: AppColors.primaryBlue),
+          seedColor: const Color(0xff09254A),
+          primary: const Color(0xff09254A),
+        ),
         useMaterial3: false,
       ),
+      // home: login(),
       initialRoute: '/',
       routes: {
         '/': (context) => const AuthWrapper(),
         '/login': (context) => const LoginScreen(),
         '/dashboard': (context) => const DashBoard(),
+        '/addUser': (context) => const AddUserScreen(),
+        '/userManagement': (context) => const UserManagementScreen(),
         '/forgotPassword': (context) => const ForgotPasswordScreen(),
       },
     );

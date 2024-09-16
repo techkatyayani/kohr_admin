@@ -20,6 +20,7 @@ class SelectionButton extends StatefulWidget {
     this.initialSelected = 0,
     required this.data,
     required this.onSelected,
+    required int currentIndex,
     super.key,
   });
 

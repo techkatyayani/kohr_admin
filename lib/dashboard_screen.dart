@@ -1,6 +1,8 @@
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:kohr_admin/colors.dart';
 import 'package:kohr_admin/screens/myteam/team_screen.dart';
 import 'package:kohr_admin/screens/usermanagement/user_management_screen.dart';
 import 'package:kohr_admin/widgets/selection_button.dart';
@@ -18,6 +20,9 @@ class _DashBoardState extends State<DashBoard> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool isSidebarExpanded = true;
   int screenIndex = 0;
+  Map<String, dynamic>? _userData;
+  final _firestore = FirebaseFirestore.instance;
+  final _auth = FirebaseAuth.instance;
 
   void openDrawer() {
     if (scaffoldKey.currentState != null) {
@@ -28,7 +33,34 @@ class _DashBoardState extends State<DashBoard> {
   List<Widget> screens = [
     const UserManagementScreen(),
     const MyTeamScreen(),
+    const MyTeamScreen(),
+    const MyTeamScreen(),
+    const MyTeamScreen(),
+    const MyTeamScreen(),
+    const MyTeamScreen(),
+    const MyTeamScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await _firestore
+          .collection("AdminUsers")
+          .doc(_auth.currentUser!.uid)
+          .get();
+
+      setState(() {
+        _userData = snapshot.data();
+      });
+    } catch (error) {
+      setState(() {});
+    }
+  }
 
   Future<void> _logout() async {
     await FirebaseAuth.instance.signOut();
@@ -74,6 +106,7 @@ class _DashBoardState extends State<DashBoard> {
             Row(
               children: [
                 const CircleAvatar(
+                  backgroundColor: AppColors.grey,
                   backgroundImage: AssetImage(
                       'assets/images/profile.jpg'), // Your profile image
                   radius: 20,
@@ -126,33 +159,36 @@ class _DashBoardState extends State<DashBoard> {
                         child: Column(
                           children: [
                             const SizedBox(height: 20),
-                            const Padding(
-                              padding: EdgeInsets.only(left: 10, right: 10),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 10, right: 10),
                               child: Row(
                                 children: [
-                                  CircleAvatar(
+                                  const CircleAvatar(
+                                    backgroundColor: AppColors.grey,
                                     backgroundImage:
                                         AssetImage('assets/images/profile.jpg'),
                                   ),
-                                  SizedBox(width: 10),
+                                  const SizedBox(width: 10),
                                   Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "Saksham Gupta",
-                                        style: TextStyle(
+                                        _userData?['name'] ?? "No Name",
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 14),
                                       ),
                                       Text(
-                                        "Development Department",
-                                        style: TextStyle(
+                                        _userData?['department'] ??
+                                            "No Department",
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 10),
                                       ),
                                     ],
-                                  )
+                                  ),
                                 ],
                               ),
                             ),
@@ -207,6 +243,7 @@ class _DashBoardState extends State<DashBoard> {
                                 });
                                 log("index : $index | label : ${value.label}");
                               },
+                              currentIndex: 0,
                             ),
                           ],
                         ),
