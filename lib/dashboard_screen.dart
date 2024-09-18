@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:kohr_admin/colors.dart';
+import 'package:kohr_admin/constants.dart';
 import 'package:kohr_admin/screens/myteam/team_screen.dart';
 import 'package:kohr_admin/screens/usermanagement/user_management_screen.dart';
 import 'package:kohr_admin/widgets/selection_button.dart';
@@ -107,8 +107,8 @@ class _DashBoardState extends State<DashBoard> {
               children: [
                 const CircleAvatar(
                   backgroundColor: AppColors.grey,
-                  backgroundImage: NetworkImage(
-                      'https://firebasestorage.googleapis.com/v0/b/practice-f2e58.appspot.com/o/profile.jpg?alt=media&token=addf52d8-d267-4028-a2e5-fa55b72b032e'), // Your profile image
+                  backgroundImage: AssetImage(
+                      'assets/images/profile.jpg'), // Your profile image
                   radius: 20,
                 ),
                 const SizedBox(width: 8),

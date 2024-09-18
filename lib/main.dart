@@ -34,16 +34,16 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: false,
       ),
-      // home: UserDetailsScreen(),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const AuthWrapper(),
-        '/login': (context) => const LoginScreen(),
-        '/dashboard': (context) => const DashBoard(),
-        '/addUser': (context) => const AddUserScreen(),
-        '/userManagement': (context) => const UserManagementScreen(),
-        '/forgotPassword': (context) => const ForgotPasswordScreen(),
-      },
+      home: UserDetailsScreen(),
+      // initialRoute: '/',
+      // routes: {
+      //   '/': (context) => const AuthWrapper(),
+      //   '/login': (context) => const LoginScreen(),
+      //   '/dashboard': (context) => const DashBoard(),
+      //   '/addUser': (context) => const AddUserScreen(),
+      //   '/userManagement': (context) => const UserManagementScreen(),
+      //   '/forgotPassword': (context) => const ForgotPasswordScreen(),
+      // },
     );
   }
 }

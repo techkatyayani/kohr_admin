@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:kohr_admin/colors.dart';
-import 'package:kohr_admin/dashboard_screen.dart';
-import 'package:kohr_admin/screens/auth/forgot_password.dart';
+import 'package:kohr_admin/constants.dart';
 import 'package:kohr_admin/widgets/bubble.dart';
 
 class LoginScreen extends StatefulWidget {

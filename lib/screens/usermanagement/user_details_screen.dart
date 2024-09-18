@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kohr_admin/colors.dart';
+import 'package:kohr_admin/constants.dart';
 import 'package:kohr_admin/screens/usermanagement/contact_details_screenn.dart';
 import 'package:kohr_admin/screens/usermanagement/financial_details.dart';
 import 'package:kohr_admin/screens/usermanagement/personal_profile_screen.dart';
@@ -45,11 +45,25 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  "Employee Profile",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Employee Profile",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: AppColors.primaryBlue),
+                      height: size.height * .01,
+                      width: size.width * .14,
+                    ),
+                  ],
                 ),
               ),
               Container(

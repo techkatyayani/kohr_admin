@@ -5,7 +5,7 @@ import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:kohr_admin/colors.dart';
+import 'package:kohr_admin/constants.dart';
 import 'package:kohr_admin/screens/usermanagement/add_user.dart';
 import 'package:kohr_admin/screens/usermanagement/user_details_screen.dart';
 import 'package:page_transition/page_transition.dart';
@@ -139,7 +139,7 @@ class _UserManagementScreenState extends State<UserManagementScreen>
             "reportingManagerCode": row[71]?.value.toString() ?? "",
             "employeeStatus": row[74]?.value.toString() ?? "",
             "id": currentUserUid,
-            "companyName": row[75]?.value.toString() ?? ""
+            "companyName": row[76]?.value.toString() ?? ""
           };
 
           log("Mapped userData: $userData");
@@ -242,7 +242,10 @@ class _UserManagementScreenState extends State<UserManagementScreen>
                       ],
                     ),
                     StreamBuilder<QuerySnapshot>(
-                      stream: _firestore.collection('profiles').snapshots(),
+                      stream: _firestore
+                          .collection('profiles')
+                          .orderBy('name', descending: false)
+                          .snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           return const Center(

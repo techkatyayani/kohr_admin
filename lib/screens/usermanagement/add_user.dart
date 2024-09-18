@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:kohr_admin/colors.dart';
+import 'package:kohr_admin/constants.dart';
 import 'package:kohr_admin/widgets/custom_dropdown.dart';
 import 'package:kohr_admin/widgets/custom_textfield.dart';
 

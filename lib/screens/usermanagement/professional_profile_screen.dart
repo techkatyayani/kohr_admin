@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kohr_admin/colors.dart';
+import 'package:kohr_admin/constants.dart';
 import 'package:kohr_admin/screens/usermanagement/widgets/label_row.dart';
 
 class ProfessionalProfileScreen extends StatefulWidget {

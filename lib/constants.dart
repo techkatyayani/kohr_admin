@@ -20,3 +20,8 @@ class AppColors {
   static const Color cardsgreen = Colors.greenAccent;
   static const Color primaryBlue = Color(0xff09254A);
 }
+
+class AppText {
+  static const String profileImage =
+      'https://firebasestorage.googleapis.com/v0/b/practice-f2e58.appspot.com/o/profile.jpg?alt=media&token=addf52d8-d267-4028-a2e5-fa55b72b032e';
+}
