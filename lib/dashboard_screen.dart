@@ -107,8 +107,8 @@ class _DashBoardState extends State<DashBoard> {
               children: [
                 const CircleAvatar(
                   backgroundColor: AppColors.grey,
-                  backgroundImage: AssetImage(
-                      'assets/images/profile.jpg'), // Your profile image
+                  backgroundImage: NetworkImage(
+                      'https://firebasestorage.googleapis.com/v0/b/practice-f2e58.appspot.com/o/profile.jpg?alt=media&token=addf52d8-d267-4028-a2e5-fa55b72b032e'), // Your profile image
                   radius: 20,
                 ),
                 const SizedBox(width: 8),

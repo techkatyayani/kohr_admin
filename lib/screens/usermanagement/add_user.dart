@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kohr_admin/colors.dart';
 import 'package:kohr_admin/widgets/custom_dropdown.dart';
@@ -20,9 +21,9 @@ class _AddUserScreenState extends State<AddUserScreen> {
   final TextEditingController _employeeCodeController = TextEditingController();
   final TextEditingController _workEmailController = TextEditingController();
 
-  final List<String> _locations = ['Admin', 'User', 'Guest'];
-  final List<String> _departments = ['Admin', 'User', 'Guest'];
-  final List<String> _designations = ['Admin', 'User', 'Guest'];
+  List<String> _locations = [];
+  List<String> _departments = [];
+  List<String> _designations = [];
 
   int _currentStep = 0;
 
@@ -34,6 +35,16 @@ class _AddUserScreenState extends State<AddUserScreen> {
     _employeeCodeController.dispose();
     _workEmailController.dispose();
     super.dispose();
+  }
+
+  void saveUser() async {
+    final response = await FirebaseFirestore.instance.collection('users').add({
+      'first_name': _firstNameController.text,
+      'middle_name': _middleNameController.text,
+      'last_name': _lastNameController.text,
+      'employee_code': _employeeCodeController.text,
+      'work_email': _workEmailController.text,
+    });
   }
 
   void _nextStep() {
@@ -50,6 +61,47 @@ class _AddUserScreenState extends State<AddUserScreen> {
         _currentStep--;
       });
     }
+  }
+
+  void fetchUniqueLocations() async {
+    var locationsSet = <String>{};
+    var departmentSet = <String>{};
+    var designationSet = <String>{};
+
+    try {
+      var snapshot =
+          await FirebaseFirestore.instance.collection('profiles').get();
+      for (var doc in snapshot.docs) {
+        var data = doc.data();
+        var location = data['location'] as String? ?? '';
+        var department = data['department'] as String? ?? '';
+        var designation = data['employeeType'] as String? ?? '';
+
+        if (location.isNotEmpty) {
+          locationsSet.add(location);
+        }
+        if (department.isNotEmpty) {
+          departmentSet.add(department);
+        }
+        if (designation.isNotEmpty) {
+          designationSet.add(designation);
+        }
+      }
+
+      setState(() {
+        _locations = locationsSet.toList();
+        _departments = departmentSet.toList();
+        _designations = designationSet.toList();
+      });
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUniqueLocations();
   }
 
   @override
@@ -293,7 +345,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
           Align(
             alignment: Alignment.centerRight,
             child: ElevatedButton(
-              onPressed: _nextStep,
+              onPressed: saveUser,
               child: const Text("Save And Next"),
             ),
           ),

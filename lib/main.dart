@@ -6,6 +6,7 @@ import 'package:kohr_admin/screens/auth/auth_handler.dart';
 import 'package:kohr_admin/screens/auth/forgot_password.dart';
 import 'package:kohr_admin/screens/auth/login_screen.dart';
 import 'package:kohr_admin/screens/usermanagement/add_user.dart';
+import 'package:kohr_admin/screens/usermanagement/user_details_screen.dart';
 import 'package:kohr_admin/screens/usermanagement/user_management_screen.dart';
 
 void main() async {
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: false,
       ),
-      // home: login(),
+      // home: UserDetailsScreen(),
       initialRoute: '/',
       routes: {
         '/': (context) => const AuthWrapper(),
