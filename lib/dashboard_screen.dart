@@ -23,6 +23,7 @@ class _DashBoardState extends State<DashBoard> {
   Map<String, dynamic>? _userData;
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
+  String dropdownValue = 'Profile';
 
   void openDrawer() {
     if (scaffoldKey.currentState != null) {
@@ -116,17 +117,23 @@ class _DashBoardState extends State<DashBoard> {
                   child: DropdownButton<String>(
                     icon:
                         const Icon(Icons.arrow_drop_down, color: Colors.white),
+                    value: dropdownValue,
                     onChanged: (String? newValue) {
-                      if (newValue == 'Logout') {
-                        _logout(); // Call the logout function
-                      }
-                      // Handle other menu item selections if necessary
+                      setState(() {
+                        dropdownValue = newValue!;
+                        if (newValue == 'Logout') {
+                          _logout();
+                        }
+                      });
                     },
                     items: <String>['Profile', 'Settings', 'Logout']
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
-                        child: Text(value),
+                        child: Text(
+                          value,
+                          style: TextStyle(color: AppColors.white),
+                        ),
                       );
                     }).toList(),
                   ),
