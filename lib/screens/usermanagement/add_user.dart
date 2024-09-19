@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kohr_admin/constants.dart';
+import 'package:kohr_admin/models/employee_model.dart';
 import 'package:kohr_admin/widgets/custom_dropdown.dart';
 import 'package:kohr_admin/widgets/custom_textfield.dart';
 
@@ -12,6 +15,9 @@ class AddUserScreen extends StatefulWidget {
 }
 
 class _AddUserScreenState extends State<AddUserScreen> {
+  String? _selectedGender;
+  final List<String> _genderOptions = ['Male', 'Female'];
+
   String? _selectedLocation;
   String? _selectedDepartment;
   String? _selectedDesignation;
@@ -20,12 +26,14 @@ class _AddUserScreenState extends State<AddUserScreen> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _employeeCodeController = TextEditingController();
   final TextEditingController _workEmailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   List<String> _locations = [];
   List<String> _departments = [];
   List<String> _designations = [];
+  bool _isLoading = false;
 
-  int _currentStep = 0;
+  int _currentStep = 1;
 
   @override
   void dispose() {
@@ -38,13 +46,60 @@ class _AddUserScreenState extends State<AddUserScreen> {
   }
 
   void saveUser() async {
-    final response = await FirebaseFirestore.instance.collection('users').add({
-      'first_name': _firstNameController.text,
-      'middle_name': _middleNameController.text,
-      'last_name': _lastNameController.text,
-      'employee_code': _employeeCodeController.text,
-      'work_email': _workEmailController.text,
+    setState(() {
+      _isLoading = true;
     });
+    if (_workEmailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Email and password cannot be empty")),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _workEmailController.text,
+        password: _passwordController.text,
+      );
+
+      if (userCredential.user != null) {
+        Employee employeeData = Employee(
+          firstName: _firstNameController.text,
+          middleName: _middleNameController.text,
+          lastName: _lastNameController.text,
+          employeeCode: _employeeCodeController.text,
+          location: _selectedLocation ?? '',
+          department: _selectedDepartment ?? '',
+          employeeType: _selectedDesignation ?? '',
+          workEmail: _workEmailController.text,
+        );
+
+        await FirebaseFirestore.instance
+            .collection('profiles')
+            .doc(_workEmailController.text)
+            .set(employeeData.toMap());
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("User profile saved successfully!")),
+        );
+      }
+      _nextStep();
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error saving user: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to save user: $e")),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _nextStep() {
@@ -338,7 +393,13 @@ class _AddUserScreenState extends State<AddUserScreen> {
                   },
                 ),
               ),
-              Expanded(child: Container()),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Password',
+                  controller: _passwordController,
+                ),
+              ),
             ],
           ),
           const Divider(height: 60),
@@ -346,7 +407,9 @@ class _AddUserScreenState extends State<AddUserScreen> {
             alignment: Alignment.centerRight,
             child: ElevatedButton(
               onPressed: saveUser,
-              child: const Text("Save And Next"),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : const Text("Save And Next"),
             ),
           ),
         ],
@@ -370,23 +433,100 @@ class _AddUserScreenState extends State<AddUserScreen> {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
           const SizedBox(height: 20),
-          const CustomTextField(labelText: "First Name"),
+          Row(
+            children: [
+              Expanded(
+                child: const CustomTextField(labelText: "First Name"),
+              ),
+              SizedBox(width: 20),
+              Expanded(
+                child: const CustomTextField(labelText: "Middle Name"),
+              ),
+            ],
+          ),
           const SizedBox(height: 20),
-          const CustomTextField(labelText: "First Name"),
-          const SizedBox(height: 20),
-          const CustomTextField(labelText: "First Name"),
-          const SizedBox(height: 50),
-          Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: 160,
-                height: 40,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(),
-                  onPressed: () {},
-                  child: const Text("Submit"),
+          Row(
+            children: [
+              Expanded(
+                child: const CustomTextField(labelText: "Last Name"),
+              ),
+              SizedBox(width: 20),
+              Expanded(
+                child: Row(
+                  children: [
+                    const CustomTextField(labelText: 'Birthday'),
+                    IconButton(
+                      icon: const Icon(EvaIcons.clock),
+                      onPressed: () {},
+                    ),
+                  ],
                 ),
-              ))
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Row(
+            children: [
+              Icon(EvaIcons.person),
+              SizedBox(width: 4),
+              Text(
+                "Gender",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    // Male Radio Button
+                    Radio<String>(
+                      value: 'Male',
+                      groupValue: _selectedGender,
+                      activeColor: AppColors.primaryBlue,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedGender = newValue;
+                        });
+                      },
+                    ),
+                    const Text('Male'),
+                    const SizedBox(
+                        width: 30), // Spacing between the radio buttons
+
+                    // Female Radio Button
+                    Radio<String>(
+                      value: 'Female',
+                      groupValue: _selectedGender,
+                      activeColor: AppColors.primaryBlue,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedGender = newValue;
+                        });
+                      },
+                    ),
+                    const Text('Female'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Align(
+            alignment: Alignment.center,
+            child: SizedBox(
+              width: 160,
+              height: 40,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(),
+                onPressed: () {},
+                child: const Text("Submit"),
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -38,6 +38,7 @@ dependencies:
   flutter:
     sdk: flutter
   font_awesome_flutter: ^10.7.0
+  mailer: ^6.1.2
   page_transition: ^2.1.0
 
 dev_dependencies:

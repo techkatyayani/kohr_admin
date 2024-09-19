@@ -6,7 +6,6 @@ import 'package:kohr_admin/screens/auth/auth_handler.dart';
 import 'package:kohr_admin/screens/auth/forgot_password.dart';
 import 'package:kohr_admin/screens/auth/login_screen.dart';
 import 'package:kohr_admin/screens/usermanagement/add_user.dart';
-import 'package:kohr_admin/screens/usermanagement/user_details_screen.dart';
 import 'package:kohr_admin/screens/usermanagement/user_management_screen.dart';
 
 void main() async {
@@ -34,16 +33,16 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: false,
       ),
-      // home: UserDetailsScreen(),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const AuthWrapper(),
-        '/login': (context) => const LoginScreen(),
-        '/dashboard': (context) => const DashBoard(),
-        '/addUser': (context) => const AddUserScreen(),
-        '/userManagement': (context) => const UserManagementScreen(),
-        '/forgotPassword': (context) => const ForgotPasswordScreen(),
-      },
+      home: AddUserScreen(),
+      //   initialRoute: '/',
+      //   routes: {
+      //     '/': (context) => const AuthWrapper(),
+      //     '/login': (context) => const LoginScreen(),
+      //     '/dashboard': (context) => const DashBoard(),
+      //     '/addUser': (context) => const AddUserScreen(),
+      //     '/userManagement': (context) => const UserManagementScreen(),
+      //     '/forgotPassword': (context) => const ForgotPasswordScreen(),
+      //   },
     );
   }
 }

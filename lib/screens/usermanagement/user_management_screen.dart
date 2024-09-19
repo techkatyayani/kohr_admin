@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:kohr_admin/constants.dart';
 import 'package:kohr_admin/screens/usermanagement/add_user.dart';
 import 'package:kohr_admin/screens/usermanagement/user_details_screen.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 import 'package:page_transition/page_transition.dart';
 
 class UserManagementScreen extends StatefulWidget {
@@ -161,6 +163,26 @@ class _UserManagementScreenState extends State<UserManagementScreen>
     }
   }
 
+  void sendMail(String recipientMail, String mailMessage) async {
+    String username = 'guptasaksham3071@gmail.com';
+    String password = 'dypufytwvbacaeif';
+    final smtpServer = gmail(username, password);
+    final message = Message()
+      ..from = Address(username, 'Mail Service')
+      ..recipients.add(recipientMail)
+      ..subject = 'Mail'
+      ..text = 'Message $mailMessage';
+    try {
+      await send(message, smtpServer);
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Email send successfully")));
+    } catch (e) {
+      log(e.toString());
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Email not send because $e")));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -230,15 +252,23 @@ class _UserManagementScreenState extends State<UserManagementScreen>
                         const SizedBox(width: 16),
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                PageTransition(
-                                    child: const AddUserScreen(),
-                                    type: PageTransitionType.fade));
+                            Navigator.pushNamed(context, '/addUser'
+                                // PageTransition(
+                                //     child: AddUserScreen(),
+                                //     type: PageTransitionType.fade),
+                                );
                           },
                           child: const Text("Add User"),
                         ),
-                        const SizedBox(width: 30)
+                        const SizedBox(width: 30),
+                        // ElevatedButton(
+                        //   onPressed: () {
+                        //     sendMail(
+                        //         'guptasaksham9303@gmail.com', 'Saksham123');
+                        //   },
+                        //   child: const Text("Send Mail"),
+                        // ),
+                        // const SizedBox(width: 16),
                       ],
                     ),
                     StreamBuilder<QuerySnapshot>(
