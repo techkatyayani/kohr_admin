@@ -205,7 +205,7 @@ class _DashBoardState extends State<DashBoard> {
                                 SelectionButtonData(
                                   activeIcon: EvaIcons.person,
                                   icon: EvaIcons.personOutline,
-                                  label: "User Management",
+                                  label: "Employee Management",
                                 ),
                                 SelectionButtonData(
                                   activeIcon: EvaIcons.grid,

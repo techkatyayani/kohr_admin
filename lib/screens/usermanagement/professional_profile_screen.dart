@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kohr_admin/constants.dart';
+import 'package:kohr_admin/models/employee_model.dart';
+import 'package:kohr_admin/screens/usermanagement/personal_profile_screen.dart';
 import 'package:kohr_admin/screens/usermanagement/widgets/label_row.dart';
 
 class ProfessionalProfileScreen extends StatefulWidget {
-  const ProfessionalProfileScreen({super.key});
+  final Employee? employee;
+  const ProfessionalProfileScreen({super.key, this.employee});
 
   @override
   State<ProfessionalProfileScreen> createState() =>
@@ -41,7 +44,7 @@ class _ProfessionalProfileScreenState extends State<ProfessionalProfileScreen> {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             Padding(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
                   LabelValueRow(label: "Degree", value: "-"),
@@ -66,7 +69,9 @@ class _ProfessionalProfileScreenState extends State<ProfessionalProfileScreen> {
                 ],
               ),
             ),
-            LabelValueRow(label: "Employee Code", value: "-"),
+            LabelValueRow(
+                label: "Employee Code",
+                value: formatValue(widget.employee?.employeeCode)),
           ],
         ),
       ),

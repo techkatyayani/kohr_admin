@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kohr_admin/constants.dart';
+import 'package:kohr_admin/models/employee_model.dart';
+import 'package:kohr_admin/screens/usermanagement/personal_profile_screen.dart';
 import 'package:kohr_admin/screens/usermanagement/widgets/label_row.dart';
 
 class WorkProfileScreen extends StatefulWidget {
-  const WorkProfileScreen({super.key});
+  final Employee? employee;
+  const WorkProfileScreen({super.key, this.employee});
 
   @override
   State<WorkProfileScreen> createState() => _WorkProfileScreenState();
@@ -36,18 +39,33 @@ class _WorkProfileScreenState extends State<WorkProfileScreen> {
             ),
             Column(
               children: [
-                LabelValueRow(label: "Location", value: "-"),
-                LabelValueRow(label: "Band", value: "-"),
-                LabelValueRow(label: "Cost Centre", value: "-"),
-                LabelValueRow(label: "Category", value: "-"),
-                LabelValueRow(label: "Department", value: "-"),
-                LabelValueRow(label: "Work Email", value: "-"),
-                LabelValueRow(label: "Designation", value: "-"),
-                LabelValueRow(label: "Joining Date", value: "-"),
-                LabelValueRow(label: "Work Experience", value: "-"),
-                LabelValueRow(label: "Reporting Manager", value: "-"),
-                LabelValueRow(label: "Confirmation Date", value: "-"),
-                LabelValueRow(label: "Retirement Age", value: "-"),
+                LabelValueRow(
+                    label: "Location",
+                    value: formatValue(widget.employee?.location)),
+                LabelValueRow(
+                    label: "Department",
+                    value: formatValue(widget.employee?.department)),
+                LabelValueRow(
+                    label: "Work Email",
+                    value: formatValue(widget.employee?.workEmail)),
+                LabelValueRow(
+                    label: "Designation",
+                    value: formatValue(widget.employee?.employeeType)),
+                LabelValueRow(
+                    label: "Joining Date",
+                    value: formatValue(widget.employee?.joiningDate)),
+                LabelValueRow(
+                    label: "Work Experience",
+                    value: formatValue(widget.employee?.workExperience)),
+                LabelValueRow(
+                    label: "Reporting Manager",
+                    value: formatValue(widget.employee?.reportingManager)),
+                LabelValueRow(
+                    label: "Confirmation Date",
+                    value: formatValue(widget.employee?.confirmationDate)),
+                LabelValueRow(
+                    label: "Retirement Age",
+                    value: formatValue(widget.employee?.retirementAge)),
               ],
             ),
           ],

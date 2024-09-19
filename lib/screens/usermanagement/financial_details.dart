@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kohr_admin/constants.dart';
+import 'package:kohr_admin/models/employee_model.dart';
+import 'package:kohr_admin/screens/usermanagement/personal_profile_screen.dart';
 import 'package:kohr_admin/screens/usermanagement/widgets/label_row.dart';
 
 class FinancialDetailsScreen extends StatefulWidget {
-  const FinancialDetailsScreen({super.key});
+  final Employee? employee;
+  const FinancialDetailsScreen({super.key, this.employee});
 
   @override
   State<FinancialDetailsScreen> createState() => _FinancialDetailsScreenState();
@@ -30,18 +33,21 @@ class _FinancialDetailsScreenState extends State<FinancialDetailsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Financial Details",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
             ),
             Column(
               children: [
-                LabelValueRow(label: "PF Number", value: "-"),
-                LabelValueRow(label: "UAN Number", value: "-"),
-                LabelValueRow(label: "Aadhar Number", value: "-"),
-                LabelValueRow(label: "EPS Contribution", value: "-"),
-                LabelValueRow(label: "ESIC Number", value: "-"),
-                LabelValueRow(label: "Company Bank Number", value: "-"),
+                LabelValueRow(
+                    label: "Bank Name",
+                    value: formatValue(widget.employee?.bankName)),
+                LabelValueRow(
+                    label: "Bank Account NUmber",
+                    value: formatValue(widget.employee?.bankAccountNumber)),
+                LabelValueRow(
+                    label: "IFSC Code",
+                    value: formatValue(widget.employee?.ifscCode)),
               ],
             ),
           ],

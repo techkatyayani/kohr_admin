@@ -173,7 +173,7 @@ class _UserManagementScreenState extends State<UserManagementScreen>
             const Padding(
               padding: EdgeInsets.only(top: 20, left: 20),
               child: Text(
-                "User Management",
+                "Employee Management",
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
@@ -299,8 +299,9 @@ class _UserManagementScreenState extends State<UserManagementScreen>
                                         Navigator.push(
                                             context,
                                             PageTransition(
-                                                child:
-                                                    const UserDetailsScreen(),
+                                                child: UserDetailsScreen(
+                                                    employeeEmail:
+                                                        userData['workEmail']),
                                                 type: PageTransitionType.fade));
                                       },
                                       onHover: (hovering) {

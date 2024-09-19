@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kohr_admin/constants.dart';
+import 'package:kohr_admin/models/employee_model.dart';
+import 'package:kohr_admin/screens/usermanagement/personal_profile_screen.dart';
 import 'package:kohr_admin/screens/usermanagement/widgets/label_row.dart';
 
 class ContactDetailsScreenn extends StatefulWidget {
-  const ContactDetailsScreenn({super.key});
+  final Employee? employee;
+  const ContactDetailsScreenn({super.key, this.employee});
 
   @override
   State<ContactDetailsScreenn> createState() => _ContactDetailsScreennState();
@@ -31,17 +34,13 @@ class _ContactDetailsScreennState extends State<ContactDetailsScreenn> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Personal Profile",
+              "Contact Details",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
             ),
             SizedBox(height: 10),
-            LabelValueRow(label: "First Name", value: "Saksham"),
-            LabelValueRow(label: "Middle Name", value: "-"),
-            LabelValueRow(label: "Last Name", value: "Gupta"),
-            LabelValueRow(label: "Gender", value: "-"),
-            LabelValueRow(label: "Birthday", value: "-"),
-            LabelValueRow(label: "Father's Name", value: "-"),
-            LabelValueRow(label: "Age", value: "-"),
+            LabelValueRow(
+                label: "Personal Email",
+                value: formatValue(widget.employee?.email)),
           ],
         ),
       ),

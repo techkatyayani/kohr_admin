@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:kohr_admin/constants.dart';
+import 'package:kohr_admin/models/employee_model.dart';
 import 'package:kohr_admin/screens/usermanagement/widgets/label_row.dart';
 
 class PersonalProfileScreen extends StatefulWidget {
-  const PersonalProfileScreen({super.key});
+  final Employee? employee;
+  const PersonalProfileScreen({super.key, required this.employee});
 
   @override
   State<PersonalProfileScreen> createState() => _PersonalProfileScreenState();
@@ -30,21 +32,37 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Personal Profile",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
             ),
-            SizedBox(height: 10),
-            LabelValueRow(label: "First Name", value: "Saksham"),
-            LabelValueRow(label: "Middle Name", value: "-"),
-            LabelValueRow(label: "Last Name", value: "Gupta"),
-            LabelValueRow(label: "Gender", value: "-"),
-            LabelValueRow(label: "Birthday", value: "-"),
-            LabelValueRow(label: "Father's Name", value: "-"),
-            LabelValueRow(label: "Age", value: "-"),
+            const SizedBox(height: 10),
+            LabelValueRow(
+                label: "First Name",
+                value: formatValue(widget.employee?.firstName)),
+            LabelValueRow(
+                label: "Middle Name",
+                value: formatValue(widget.employee?.middleName)),
+            LabelValueRow(
+                label: "Last Name",
+                value: formatValue(widget.employee?.lastName)),
+            LabelValueRow(
+                label: "Gender", value: formatValue(widget.employee?.gender)),
+            LabelValueRow(
+                label: "Birthday",
+                value: formatValue(widget.employee?.birthday)),
+            LabelValueRow(
+                label: "Father's Name",
+                value: formatValue(widget.employee?.fatherName)),
+            LabelValueRow(
+                label: "Age", value: formatValue(widget.employee?.age)),
           ],
         ),
       ),
     );
   }
+}
+
+String formatValue(String? value) {
+  return (value?.trim().isEmpty ?? true) ? "-" : value!;
 }
