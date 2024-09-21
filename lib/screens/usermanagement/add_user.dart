@@ -58,7 +58,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
   List<String> _designations = [];
   bool _isLoading = false;
 
-  int _currentStep = 1;
+  int _currentStep = 0;
 
   @override
   void dispose() {
