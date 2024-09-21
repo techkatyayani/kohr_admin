@@ -16,7 +16,6 @@ class AddUserScreen extends StatefulWidget {
 
 class _AddUserScreenState extends State<AddUserScreen> {
   String? _selectedGender;
-  final List<String> _genderOptions = ['Male', 'Female'];
 
   String? _selectedLocation;
   String? _selectedDepartment;
@@ -27,7 +26,33 @@ class _AddUserScreenState extends State<AddUserScreen> {
   final TextEditingController _employeeCodeController = TextEditingController();
   final TextEditingController _workEmailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  final TextEditingController _dobController = TextEditingController();
+  final TextEditingController _fatherNameController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _anniversaryController = TextEditingController();
+  final TextEditingController _familyRelationshipController =
+      TextEditingController();
+  final TextEditingController _familyNameController = TextEditingController();
+  final TextEditingController _familyDateOfBirthController =
+      TextEditingController();
+  final TextEditingController _familyContactController =
+      TextEditingController();
+  final TextEditingController _familyAddresController = TextEditingController();
+  final TextEditingController _degreeController = TextEditingController();
+  final TextEditingController _specializationController =
+      TextEditingController();
+  final TextEditingController _collageController = TextEditingController();
+  final TextEditingController _degreeTimeController = TextEditingController();
+  final TextEditingController _experienceTitleController =
+      TextEditingController();
+  final TextEditingController _experienceLocationController =
+      TextEditingController();
+  final TextEditingController _experienceTimeController =
+      TextEditingController();
+  final TextEditingController _experienceDescriptionController =
+      TextEditingController();
+  // final TextEditingController _familyAddresController = TextEditingController();
+  // final TextEditingController _familyAddresController = TextEditingController();
   List<String> _locations = [];
   List<String> _departments = [];
   List<String> _designations = [];
@@ -43,6 +68,23 @@ class _AddUserScreenState extends State<AddUserScreen> {
     _employeeCodeController.dispose();
     _workEmailController.dispose();
     super.dispose();
+  }
+
+  Future<void> _selectDate(
+      BuildContext context, TextEditingController controller) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      helpText: 'Birthday',
+    );
+
+    if (picked != null) {
+      setState(() {
+        controller.text = "${picked.day}/${picked.month}/${picked.year}";
+      });
+    }
   }
 
   void saveUser() async {
@@ -429,18 +471,24 @@ class _AddUserScreenState extends State<AddUserScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            "Complete Profile",
+            "PERSONAL PROFILE",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
           const SizedBox(height: 20),
           Row(
             children: [
               Expanded(
-                child: const CustomTextField(labelText: "First Name"),
+                child: CustomTextField(
+                  labelText: "First Name",
+                  controller: _firstNameController,
+                ),
               ),
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
               Expanded(
-                child: const CustomTextField(labelText: "Middle Name"),
+                child: CustomTextField(
+                  labelText: "Middle Name",
+                  controller: _middleNameController,
+                ),
               ),
             ],
           ),
@@ -448,73 +496,297 @@ class _AddUserScreenState extends State<AddUserScreen> {
           Row(
             children: [
               Expanded(
-                child: const CustomTextField(labelText: "Last Name"),
-              ),
-              SizedBox(width: 20),
-              Expanded(
-                child: Row(
-                  children: [
-                    const CustomTextField(labelText: 'Birthday'),
-                    IconButton(
-                      icon: const Icon(EvaIcons.clock),
-                      onPressed: () {},
-                    ),
-                  ],
+                child: CustomTextField(
+                  labelText: "Last Name",
+                  controller: _lastNameController,
                 ),
               ),
+              const SizedBox(width: 20),
+              Expanded(
+                  child: Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      labelText: 'Birthday',
+                      controller: _dobController,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(EvaIcons.calendar),
+                    onPressed: () {
+                      _selectDate(context, _dobController);
+                    },
+                  ),
+                ],
+              )),
             ],
           ),
-          SizedBox(height: 20),
-          Row(
+          const SizedBox(height: 20),
+          const Row(
             children: [
               Icon(EvaIcons.person),
               SizedBox(width: 4),
               Text(
                 "Gender",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
               ),
             ],
           ),
           const SizedBox(height: 6),
           Row(
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  // Male Radio Button
+                  Radio<String>(
+                    value: 'Male',
+                    groupValue: _selectedGender,
+                    activeColor: AppColors.primaryBlue,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedGender = newValue;
+                      });
+                    },
+                  ),
+                  const Text('Male'),
+                  const SizedBox(width: 30),
+
+                  Radio<String>(
+                    value: 'Female',
+                    groupValue: _selectedGender,
+                    activeColor: AppColors.primaryBlue,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedGender = newValue;
+                      });
+                    },
+                  ),
+                  const Text('Female'),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: "Father's Name",
+                  controller: _fatherNameController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Age',
+                  controller: _ageController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 40),
+          const Text(
+            "Marital Status",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
               Expanded(
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    // Male Radio Button
-                    Radio<String>(
-                      value: 'Male',
-                      groupValue: _selectedGender,
-                      activeColor: AppColors.primaryBlue,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedGender = newValue;
-                        });
+                  children: [
+                    Expanded(
+                      child: CustomTextField(
+                        labelText: 'Anniversary',
+                        controller: _anniversaryController,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(EvaIcons.calendar),
+                      onPressed: () {
+                        _selectDate(context, _anniversaryController);
                       },
                     ),
-                    const Text('Male'),
-                    const SizedBox(
-                        width: 30), // Spacing between the radio buttons
-
-                    // Female Radio Button
-                    Radio<String>(
-                      value: 'Female',
-                      groupValue: _selectedGender,
-                      activeColor: AppColors.primaryBlue,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedGender = newValue;
-                        });
+                  ],
+                ),
+              ),
+              Expanded(child: Container()),
+            ],
+          ),
+          const SizedBox(height: 40),
+          const Text(
+            "Family Details",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: "Name",
+                  controller: _familyNameController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Relationship',
+                  controller: _familyRelationshipController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextField(
+                        labelText: 'Date Of Birth',
+                        controller: _anniversaryController,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(EvaIcons.calendar),
+                      onPressed: () {
+                        _selectDate(context, _familyDateOfBirthController);
                       },
                     ),
-                    const Text('Female'),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Contact Detais',
+                  controller: _familyContactController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Address',
+                  controller: _familyAddresController,
+                ),
+              ),
+              Expanded(child: Container()),
+            ],
+          ),
+          const Divider(height: 60),
+          const Text(
+            "PROFESSIONAL PROFILE",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          const SizedBox(height: 30),
+          const Text(
+            "Highest Education Qualification",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: "Degree",
+                  controller: _degreeController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Specialization',
+                  controller: _specializationController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: "Collage",
+                  controller: _collageController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextField(
+                        labelText: 'Time',
+                        controller: _degreeTimeController,
+                      ),
+                    ),
                   ],
                 ),
               ),
             ],
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 40),
+          const Text(
+            "Past Work Experience",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: "Title",
+                  controller: _experienceTitleController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Location',
+                  controller: _experienceLocationController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Time (Months)',
+                  controller: _experienceTimeController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Description',
+                  controller: _experienceDescriptionController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Employee Code',
+                  controller: _employeeCodeController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Container(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
           Align(
             alignment: Alignment.center,
             child: SizedBox(

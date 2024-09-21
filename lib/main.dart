@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:kohr_admin/comboScreen.dart';
 import 'package:kohr_admin/dashboard_screen.dart';
 import 'package:kohr_admin/firebase_options.dart';
 import 'package:kohr_admin/screens/auth/auth_handler.dart';
@@ -33,16 +34,16 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: false,
       ),
-      home: AddUserScreen(),
-      //   initialRoute: '/',
-      //   routes: {
-      //     '/': (context) => const AuthWrapper(),
-      //     '/login': (context) => const LoginScreen(),
-      //     '/dashboard': (context) => const DashBoard(),
-      //     '/addUser': (context) => const AddUserScreen(),
-      //     '/userManagement': (context) => const UserManagementScreen(),
-      //     '/forgotPassword': (context) => const ForgotPasswordScreen(),
-      //   },
+      // home: Comboscreen(),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const AuthWrapper(),
+          '/login': (context) => const LoginScreen(),
+          '/dashboard': (context) => const DashBoard(),
+          '/addUser': (context) => const AddUserScreen(),
+          '/userManagement': (context) => const UserManagementScreen(),
+          '/forgotPassword': (context) => const ForgotPasswordScreen(),
+        },
     );
   }
 }

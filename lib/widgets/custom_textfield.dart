@@ -28,13 +28,6 @@ class CustomTextField extends StatelessWidget {
         labelStyle: TextStyle(
           color: AppColors.primaryBlue.withOpacity(0.4),
         ),
-        // enabledBorder: OutlineInputBorder(
-        //   borderSide: const BorderSide(
-        //     color: AppColors.primaryBlue,
-        //     width: 1.5,
-        //   ),
-        //   borderRadius: BorderRadius.circular(10),
-        // ),
         focusedBorder: OutlineInputBorder(
           borderSide: const BorderSide(
             color: AppColors.primaryBlue,

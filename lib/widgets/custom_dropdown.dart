@@ -7,7 +7,6 @@ class CustomDropdown<T> extends StatelessWidget {
   final List<DropdownMenuItem<T>> items;
   final ValueChanged<T?>? onChanged;
   final IconData? icon;
-
   const CustomDropdown({
     super.key,
     required this.labelText,
@@ -48,7 +47,7 @@ class CustomDropdown<T> extends StatelessWidget {
                 // ),
                 borderRadius: BorderRadius.circular(10),
               ),
-              hintText: 'Location'
+              hintText: labelText
               // filled: true,
               // fillColor: Colors.grey[100],
               // prefixIcon: icon != null
