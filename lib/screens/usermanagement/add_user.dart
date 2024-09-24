@@ -16,10 +16,12 @@ class AddUserScreen extends StatefulWidget {
 
 class _AddUserScreenState extends State<AddUserScreen> {
   String? _selectedGender;
-
+  String? _selectedBloodGroup;
   String? _selectedLocation;
   String? _selectedDepartment;
   String? _selectedDesignation;
+  String? _selectedReportingManager;
+  String? _selectedWorkMode;
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _middleNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -51,11 +53,55 @@ class _AddUserScreenState extends State<AddUserScreen> {
       TextEditingController();
   final TextEditingController _experienceDescriptionController =
       TextEditingController();
-  // final TextEditingController _familyAddresController = TextEditingController();
-  // final TextEditingController _familyAddresController = TextEditingController();
+  final TextEditingController _personalEmailController =
+      TextEditingController();
+  final TextEditingController _countryCodeController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _homePhoneNumberController =
+      TextEditingController();
+  final TextEditingController _permanentAddressController =
+      TextEditingController();
+  final TextEditingController _correspondenceAddressController =
+      TextEditingController();
+  final TextEditingController _bankNameController = TextEditingController();
+  final TextEditingController _ifscCodeController = TextEditingController();
+  final TextEditingController _beneficiaryNameController =
+      TextEditingController();
+  final TextEditingController _bankAccountNumberController =
+      TextEditingController();
+  final TextEditingController _panCardNumberController =
+      TextEditingController();
+  final TextEditingController _healthInsuarancePolicyController =
+      TextEditingController();
+  final TextEditingController _healthInsuarancePremiumController =
+      TextEditingController();
+  final TextEditingController _accidentalInsuaranceController =
+      TextEditingController();
+  final TextEditingController _adharCardNumberController =
+      TextEditingController();
+  final TextEditingController _joiningDateController = TextEditingController();
+  final TextEditingController _cardNumberController = TextEditingController();
+  final TextEditingController _workExperienceController =
+      TextEditingController();
+  final TextEditingController _probationPeriodController =
+      TextEditingController();
+  final TextEditingController _confirmationDateController =
+      TextEditingController();
+  final TextEditingController _grossSalaryController = TextEditingController();
+  final TextEditingController _ctcController = TextEditingController();
+  final TextEditingController _noticePeriodController = TextEditingController();
+  final TextEditingController _tenurePeriodController = TextEditingController();
+  final TextEditingController _retirementAgeController =
+      TextEditingController();
+  final TextEditingController _tenureLastDateController =
+      TextEditingController();
+  final TextEditingController _retirementDateController =
+      TextEditingController();
   List<String> _locations = [];
   List<String> _departments = [];
   List<String> _designations = [];
+  List<String> _reportingManagers = [];
+  List<String> _workModes = [];
   bool _isLoading = false;
 
   int _currentStep = 0;
@@ -70,14 +116,14 @@ class _AddUserScreenState extends State<AddUserScreen> {
     super.dispose();
   }
 
-  Future<void> _selectDate(
-      BuildContext context, TextEditingController controller) async {
+  Future<void> _selectDate(BuildContext context,
+      TextEditingController controller, String label) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      helpText: 'Birthday',
+      helpText: label,
     );
 
     if (picked != null) {
@@ -160,36 +206,59 @@ class _AddUserScreenState extends State<AddUserScreen> {
     }
   }
 
-  void fetchUniqueLocations() async {
-    var locationsSet = <String>{};
-    var departmentSet = <String>{};
-    var designationSet = <String>{};
-
+  void fetchWorkModes() async {
     try {
-      var snapshot =
-          await FirebaseFirestore.instance.collection('profiles').get();
-      for (var doc in snapshot.docs) {
-        var data = doc.data();
-        var location = data['location'] as String? ?? '';
-        var department = data['department'] as String? ?? '';
-        var designation = data['employeeType'] as String? ?? '';
+      // Fetch all collections concurrently using Future.wait
+      final results = await Future.wait([
+        FirebaseFirestore.instance
+            .collection('Masterdata')
+            .doc('collections')
+            .collection('WorkModes')
+            .get(),
+        FirebaseFirestore.instance
+            .collection('Masterdata')
+            .doc('collections')
+            .collection('Designations')
+            .get(),
+        FirebaseFirestore.instance
+            .collection('Masterdata')
+            .doc('collections')
+            .collection('Departments')
+            .get(),
+        FirebaseFirestore.instance
+            .collection('Masterdata')
+            .doc('collections')
+            .collection('Locations')
+            .get(),
+        FirebaseFirestore.instance
+            .collection('Masterdata')
+            .doc('collections')
+            .collection('ReportingManagers')
+            .get(),
+      ]);
 
-        if (location.isNotEmpty) {
-          locationsSet.add(location);
-        }
-        if (department.isNotEmpty) {
-          departmentSet.add(department);
-        }
-        if (designation.isNotEmpty) {
-          designationSet.add(designation);
-        }
-      }
+      final workModes = results[0];
+      final designations = results[1];
+      final departments = results[2];
+      final locations = results[3];
+      final reportManagers = results[4];
 
+      // Update state in one go
       setState(() {
-        _locations = locationsSet.toList();
-        _departments = departmentSet.toList();
-        _designations = designationSet.toList();
+        _workModes =
+            workModes.docs.map((doc) => doc['name'] as String).toList();
+        _designations =
+            designations.docs.map((doc) => doc['name'] as String).toList();
+        _departments =
+            departments.docs.map((doc) => doc['name'] as String).toList();
+        _locations =
+            locations.docs.map((doc) => doc['name'] as String).toList();
+        _reportingManagers =
+            reportManagers.docs.map((doc) => doc['name'] as String).toList();
       });
+
+      print(
+          'Data fetched successfully: $_workModes, $_designations, $_departments, $_locations, $_reportingManagers');
     } catch (e) {
       print('Error fetching data: $e');
     }
@@ -198,7 +267,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
   @override
   void initState() {
     super.initState();
-    fetchUniqueLocations();
+    fetchWorkModes();
   }
 
   @override
@@ -514,7 +583,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
                   IconButton(
                     icon: const Icon(EvaIcons.calendar),
                     onPressed: () {
-                      _selectDate(context, _dobController);
+                      _selectDate(context, _dobController, 'Birthday');
                     },
                   ),
                 ],
@@ -605,7 +674,8 @@ class _AddUserScreenState extends State<AddUserScreen> {
                     IconButton(
                       icon: const Icon(EvaIcons.calendar),
                       onPressed: () {
-                        _selectDate(context, _anniversaryController);
+                        _selectDate(
+                            context, _anniversaryController, 'Anniversary');
                       },
                     ),
                   ],
@@ -646,21 +716,23 @@ class _AddUserScreenState extends State<AddUserScreen> {
                     Expanded(
                       child: CustomTextField(
                         labelText: 'Date Of Birth',
-                        controller: _anniversaryController,
+                        controller: _familyDateOfBirthController,
                       ),
                     ),
                     IconButton(
                       icon: const Icon(EvaIcons.calendar),
                       onPressed: () {
-                        _selectDate(context, _familyDateOfBirthController);
+                        _selectDate(context, _familyDateOfBirthController,
+                            'Date Of Birth');
                       },
                     ),
                   ],
                 ),
               ),
+              const SizedBox(width: 20),
               Expanded(
                 child: CustomTextField(
-                  labelText: 'Contact Detais',
+                  labelText: 'Contact Details',
                   controller: _familyContactController,
                 ),
               ),
@@ -771,6 +843,351 @@ class _AddUserScreenState extends State<AddUserScreen> {
               ),
             ],
           ),
+          const Divider(height: 60),
+          const Text(
+            "CONTACT DETAILS",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Personal Email',
+                  controller: _personalEmailController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Country Code',
+                  controller: _countryCodeController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Phone Number',
+                  controller: _phoneNumberController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Home Phone Number',
+                  controller: _homePhoneNumberController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Permanent Address',
+                  controller: _permanentAddressController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Correspondence Address',
+                  controller: _correspondenceAddressController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          const Row(
+            children: [
+              Icon(EvaIcons.person),
+              SizedBox(width: 4),
+              Text(
+                "Blood Group",
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Radio<String>(
+                    value: 'A+',
+                    groupValue: _selectedBloodGroup,
+                    activeColor: AppColors.primaryBlue,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedBloodGroup = newValue;
+                      });
+                    },
+                  ),
+                  const Text('A+'),
+                  const SizedBox(width: 20),
+                  Radio<String>(
+                    value: 'A-',
+                    groupValue: _selectedBloodGroup,
+                    activeColor: AppColors.primaryBlue,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedBloodGroup = newValue;
+                      });
+                    },
+                  ),
+                  const Text('A-'),
+                  const SizedBox(width: 20),
+                  Radio<String>(
+                    value: 'B+',
+                    groupValue: _selectedBloodGroup,
+                    activeColor: AppColors.primaryBlue,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedBloodGroup = newValue;
+                      });
+                    },
+                  ),
+                  const Text('B+'),
+                  const SizedBox(width: 20),
+                  Radio<String>(
+                    value: 'B-',
+                    groupValue: _selectedBloodGroup,
+                    activeColor: AppColors.primaryBlue,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedBloodGroup = newValue;
+                      });
+                    },
+                  ),
+                  const Text('B-'),
+                  const SizedBox(width: 20),
+                  Radio<String>(
+                    value: 'AB+',
+                    groupValue: _selectedBloodGroup,
+                    activeColor: AppColors.primaryBlue,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedBloodGroup = newValue;
+                      });
+                    },
+                  ),
+                  const Text('AB+'),
+                  const SizedBox(width: 20),
+                  Radio<String>(
+                    value: 'AB-',
+                    groupValue: _selectedBloodGroup,
+                    activeColor: AppColors.primaryBlue,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedBloodGroup = newValue;
+                      });
+                    },
+                  ),
+                  const Text('AB-'),
+                  const SizedBox(width: 20),
+                  Radio<String>(
+                    value: 'O+',
+                    groupValue: _selectedBloodGroup,
+                    activeColor: AppColors.primaryBlue,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedBloodGroup = newValue;
+                      });
+                    },
+                  ),
+                  const Text('O+'),
+                  const SizedBox(width: 20),
+                  Radio<String>(
+                    value: 'O-',
+                    groupValue: _selectedBloodGroup,
+                    activeColor: AppColors.primaryBlue,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedBloodGroup = newValue;
+                      });
+                    },
+                  ),
+                  const Text('O-'),
+                ],
+              ),
+            ],
+          ),
+          const Divider(height: 60),
+          const Text(
+            "FINANCIAL DETAILS",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: "Bank Name",
+                  controller: _bankNameController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'IFSC Code',
+                  controller: _ifscCodeController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: "Beneficiary Name",
+                  controller: _beneficiaryNameController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Bank Account Number',
+                  controller: _bankAccountNumberController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: "Pan Card Number",
+                  controller: _panCardNumberController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Health Insurance Policy Number',
+                  controller: _healthInsuarancePolicyController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: "Health Insuarance Premium",
+                  controller: _healthInsuarancePremiumController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Accidental Insuarance Policy Number',
+                  controller: _accidentalInsuaranceController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: "Adhar Card Number",
+                  controller: _adharCardNumberController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Container(),
+              ),
+            ],
+          ),
+          const Divider(height: 60),
+          const Text(
+            "WORK PROFILE",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          const SizedBox(height: 30),
+          Row(
+            children: [
+              Expanded(
+                child: CustomDropdown<String>(
+                  labelText: "Location",
+                  value: _selectedLocation,
+                  items: _locations
+                      .map((role) => DropdownMenuItem<String>(
+                            value: role,
+                            child: Text(role),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedLocation = value;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Work Email',
+                  controller: _workEmailController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomDropdown<String>(
+                  labelText: 'Department',
+                  value: _selectedDepartment,
+                  items: _departments
+                      .map(
+                        (department) => DropdownMenuItem<String>(
+                          value: department,
+                          child: Text(department),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedDepartment = value;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomDropdown<String>(
+                  labelText: 'Designations',
+                  value: _selectedDesignation,
+                  items: _designations
+                      .map(
+                        (designation) => DropdownMenuItem<String>(
+                          value: designation,
+                          child: Text(designation),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedDesignation = value;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 20),
           Row(
             children: [
@@ -782,11 +1199,234 @@ class _AddUserScreenState extends State<AddUserScreen> {
               ),
               const SizedBox(width: 20),
               Expanded(
-                child: Container(),
+                child: CustomDropdown<String>(
+                  labelText: 'Work Mode',
+                  value: _selectedWorkMode,
+                  items: _workModes
+                      .map(
+                        (designation) => DropdownMenuItem<String>(
+                          value: designation,
+                          child: Text(designation),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedWorkMode = value;
+                    });
+                  },
+                ),
               ),
             ],
           ),
           const SizedBox(height: 20),
+          const Row(
+            children: [
+              Text(
+                'Joining Date* ',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(width: 4),
+              Text(
+                '( 1/1/2000 )',
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextField(
+                        labelText: 'Joining Date',
+                        controller: _joiningDateController,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(EvaIcons.calendar),
+                      onPressed: () {
+                        _selectDate(
+                            context, _joiningDateController, 'Joining Date');
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomTextField(
+                  labelText: 'Card Number',
+                  controller: _cardNumberController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: "Work Experience",
+                  controller: _workExperienceController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomDropdown<String>(
+                  labelText: 'Reporting Manager',
+                  value: _selectedReportingManager,
+                  items: _reportingManagers
+                      .map(
+                        (designation) => DropdownMenuItem<String>(
+                          value: designation,
+                          child: Text(designation),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedReportingManager = value;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: "Probation Period (in days)",
+                  controller: _probationPeriodController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextField(
+                        labelText: 'Confirmation Date',
+                        controller: _confirmationDateController,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(EvaIcons.calendar),
+                      onPressed: () {
+                        _selectDate(context, _confirmationDateController,
+                            'Confirmation Date');
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 40),
+          const Text(
+            "Compensation",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: "Gross",
+                  controller: _grossSalaryController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomTextField(
+                  labelText: "CTC",
+                  controller: _ctcController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: "Notice Period",
+                  controller: _noticePeriodController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomTextField(
+                  labelText: "Tenure or Contract Period",
+                  controller: _tenurePeriodController,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  labelText: "Retirement Age",
+                  controller: _retirementAgeController,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextField(
+                        labelText: 'Tenure Last Date',
+                        controller: _tenureLastDateController,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(EvaIcons.calendar),
+                      onPressed: () {
+                        _selectDate(context, _tenureLastDateController,
+                            'Tenure Last Date');
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextField(
+                        labelText: 'Retirement Date',
+                        controller: _retirementDateController,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(EvaIcons.calendar),
+                      onPressed: () {
+                        _selectDate(context, _retirementDateController,
+                            'Retirement Date');
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Container(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 40),
           Align(
             alignment: Alignment.center,
             child: SizedBox(
