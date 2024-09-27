@@ -40,13 +40,13 @@ class CustomDropdown<T> extends StatelessWidget {
               //   ),
               //   borderRadius: BorderRadius.circular(10),
               // ),
-              focusedBorder: OutlineInputBorder(
-                // borderSide: const BorderSide(
-                //   color: AppColors.primaryBlue,
-                //   width: 2.0,
-                // ),
-                borderRadius: BorderRadius.circular(10),
-              ),
+              // focusedBorder: OutlineInputBorder(
+              //   // borderSide: const BorderSide(
+              //   //   color: AppColors.primaryBlue,
+              //   //   width: 2.0,
+              //   // ),
+              //   borderRadius: BorderRadius.circular(10),
+              // ),
               hintText: labelText
               // filled: true,
               // fillColor: Colors.grey[100],

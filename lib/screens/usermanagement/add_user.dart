@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kohr_admin/constants.dart';
 import 'package:kohr_admin/models/employee_model.dart';
+import 'package:kohr_admin/services/api_service.dart';
 import 'package:kohr_admin/widgets/custom_dropdown.dart';
 import 'package:kohr_admin/widgets/custom_textfield.dart';
 
@@ -116,6 +117,33 @@ class _AddUserScreenState extends State<AddUserScreen> {
     super.dispose();
   }
 
+  Future<void> _sendPassword(
+      String userName, String email, String employeeCode) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      _passwordController.text = await ApiService().sendPasswordRequest(
+        username: userName,
+        email: email,
+        employeeCode: employeeCode,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password send successfully')),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to send password: $error')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   Future<void> _selectDate(BuildContext context,
       TextEditingController controller, String label) async {
     final DateTime? picked = await showDatePicker(
@@ -137,7 +165,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
     setState(() {
       _isLoading = true;
     });
-    if (_workEmailController.text.isEmpty || _passwordController.text.isEmpty) {
+    if (_workEmailController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Email and password cannot be empty")),
       );
@@ -146,6 +174,10 @@ class _AddUserScreenState extends State<AddUserScreen> {
       });
       return;
     }
+    String fullName =
+        "${_firstNameController.text} ${_lastNameController.text}";
+    await _sendPassword(
+        fullName, _workEmailController.text, _employeeCodeController.text);
 
     try {
       UserCredential userCredential =
@@ -175,6 +207,103 @@ class _AddUserScreenState extends State<AddUserScreen> {
           const SnackBar(content: Text("User profile saved successfully!")),
         );
       }
+      _nextStep();
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error saving user: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to save user: $e")),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void submitUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    if (_workEmailController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Email cannot be empty")),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      Employee employeeData = Employee(
+        firstName: _firstNameController.text,
+        middleName: _middleNameController.text,
+        lastName: _lastNameController.text,
+        birthday: _dobController.text,
+        gender: _selectedGender ?? '',
+        fatherName: _fatherNameController.text,
+        age: _ageController.text,
+        anniversary: _anniversaryController.text,
+        familyName: _familyNameController.text,
+        familyRelationship: _familyRelationshipController.text,
+        familyDateOfBirth: _familyDateOfBirthController.text,
+        familyContact: _familyContactController.text,
+        familyAddress: _familyAddresController.text,
+        degree: _degreeController.text,
+        specialization: _specializationController.text,
+        college: _collageController.text,
+        degreeTime: _degreeTimeController.text,
+        experienceTitle: _experienceTitleController.text,
+        experienceLocation: _experienceLocationController.text,
+        experienceTime: _experienceTimeController.text,
+        experienceDescription: _experienceDescriptionController.text,
+        personalEmail: _personalEmailController.text,
+        countryCode: _countryCodeController.text,
+        phoneNumber: _phoneNumberController.text,
+        homePhoneNumber: _homePhoneNumberController.text,
+        permanentAddress: _permanentAddressController.text,
+        correspondenceAddress: _correspondenceAddressController.text,
+        bloodGroup: _selectedBloodGroup ?? '',
+        bankName: _bankNameController.text,
+        ifscCode: _ifscCodeController.text,
+        beneficiaryName: _beneficiaryNameController.text,
+        bankAccountNumber: _bankAccountNumberController.text,
+        panCardNumber: _panCardNumberController.text,
+        healthInsurancePolicy: _healthInsuarancePolicyController.text,
+        healthInsurancePremium: _healthInsuarancePremiumController.text,
+        accidentalInsurancePolicy: _accidentalInsuaranceController.text,
+        aadharNumber: _adharCardNumberController.text,
+        location: _selectedLocation ?? '',
+        workEmail: _workEmailController.text,
+        department: _selectedDepartment ?? '',
+        employeeType: _selectedDesignation ?? '',
+        employeeCode: _employeeCodeController.text,
+        workMode: _selectedWorkMode ?? '',
+        joiningDate: _joiningDateController.text,
+        cardNumber: _cardNumberController.text,
+        workExperience: _workExperienceController.text,
+        reportingManager: _selectedReportingManager ?? '',
+        probationPeriod: _probationPeriodController.text,
+        confirmationDate: _confirmationDateController.text,
+        ctc: _ctcController.text,
+        grossSalary: _grossSalaryController.text,
+        noticePeriod: _noticePeriodController.text,
+        contractPeriod: _tenurePeriodController.text,
+        retirementAge: _retirementAgeController.text,
+        tenureLastDate: _tenureLastDateController.text,
+        retirementDate: _retirementDateController.text,
+      );
+
+      await FirebaseFirestore.instance
+          .collection('profiles')
+          .doc(_workEmailController.text)
+          .update(employeeData.toMap());
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("User profile saved successfully!")),
+      );
       _nextStep();
       setState(() {
         _isLoading = false;
@@ -505,12 +634,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
                 ),
               ),
               const SizedBox(width: 20),
-              Expanded(
-                child: CustomTextField(
-                  labelText: 'Password',
-                  controller: _passwordController,
-                ),
-              ),
+              Expanded(child: Container()),
             ],
           ),
           const Divider(height: 60),
@@ -519,7 +643,13 @@ class _AddUserScreenState extends State<AddUserScreen> {
             child: ElevatedButton(
               onPressed: saveUser,
               child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    )
                   : const Text("Save And Next"),
             ),
           ),
@@ -1434,7 +1564,9 @@ class _AddUserScreenState extends State<AddUserScreen> {
               height: 40,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(),
-                onPressed: () {},
+                onPressed: () {
+                  submitUser();
+                },
                 child: const Text("Submit"),
               ),
             ),

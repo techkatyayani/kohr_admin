@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:kohr_admin/dashboard_screen.dart';
 import 'package:kohr_admin/firebase_options.dart';
 import 'package:kohr_admin/screens/auth/auth_handler.dart';
-import 'package:kohr_admin/screens/auth/forgot_password.dart';
 import 'package:kohr_admin/screens/auth/login_screen.dart';
-import 'package:kohr_admin/screens/usermanagement/add_user.dart';
-import 'package:kohr_admin/screens/usermanagement/user_management_screen.dart';
+import 'package:kohr_admin/screens/myteam/attendance_details.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,15 +31,15 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: false,
       ),
-      // home: const AddUserScreen(),
+      // home: const AttendanceDetails(
+      //   employeeName: 'Ameesha Tiwari',
+      //   employeeWorkMail: 'praveen.dev@katyayaniorganics.com',
+      // ),
       initialRoute: '/',
       routes: {
         '/': (context) => const AuthWrapper(),
         '/login': (context) => const LoginScreen(),
         '/dashboard': (context) => const DashBoard(),
-        '/addUser': (context) => const AddUserScreen(),
-        '/userManagement': (context) => const UserManagementScreen(),
-        '/forgotPassword': (context) => const ForgotPasswordScreen(),
       },
     );
   }

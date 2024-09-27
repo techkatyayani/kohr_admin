@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kohr_admin/constants.dart';
+import 'package:kohr_admin/dashboard_screen.dart';
 import 'package:kohr_admin/widgets/bubble.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -11,8 +13,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // ... (rest of your code remains the same)
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
@@ -143,23 +143,30 @@ class _LoginFormState extends State<LoginForm> {
     });
 
     try {
-      if (_loginMethod == 'workEmail') {
-        // Sign in with email and password
-        await _auth.signInWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      var userEmail = userCredential.user!.email;
+
+      var adminCheck = await FirebaseFirestore.instance
+          .collection('AdminUsers')
+          .doc(userEmail)
+          .get();
+
+      if (adminCheck.exists) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DashBoard(),
+          ),
         );
       } else {
-        // Sign in using a custom logic for employee code
-        String email = "${_employeeCodeController.text.trim()}@company.com";
-        await _auth.signInWithEmailAndPassword(
-          email: email,
-          password: _passwordController.text.trim(),
-        );
+        setState(() {
+          _errorMessage = "You are not authorized as an admin.";
+        });
       }
-
-      // On successful sign in, navigate to the dashboard
-      Navigator.pushReplacementNamed(context, '/dashboard');
     } on FirebaseAuthException catch (e) {
       setState(() {
         _errorMessage = e.message ?? 'An unknown error occurred';

@@ -252,11 +252,12 @@ class _UserManagementScreenState extends State<UserManagementScreen>
                         const SizedBox(width: 16),
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.pushNamed(context, '/addUser'
-                                // PageTransition(
-                                //     child: AddUserScreen(),
-                                //     type: PageTransitionType.fade),
-                                );
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                  child: const AddUserScreen(),
+                                  type: PageTransitionType.fade),
+                            );
                           },
                           child: const Text("Add User"),
                         ),

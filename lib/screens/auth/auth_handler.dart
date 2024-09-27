@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:kohr_admin/dashboard_screen.dart';
+import 'package:kohr_admin/screens/auth/login_screen.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
@@ -23,11 +25,21 @@ class AuthWrapper extends StatelessWidget {
           );
         } else if (snapshot.hasData && snapshot.data != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.pushReplacementNamed(context, '/dashboard');
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const DashBoard(),
+              ),
+            );
           });
         } else {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.pushReplacementNamed(context, '/login');
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const LoginScreen(),
+              ),
+            );
           });
         }
         return const SizedBox.shrink();

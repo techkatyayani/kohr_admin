@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:kohr_admin/constants.dart';
-import 'package:kohr_admin/screens/myteam/team_screen.dart';
+import 'package:kohr_admin/screens/myteam/attendance_screen.dart';
 import 'package:kohr_admin/screens/usermanagement/user_management_screen.dart';
 import 'package:kohr_admin/widgets/selection_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -33,13 +33,7 @@ class _DashBoardState extends State<DashBoard> {
 
   List<Widget> screens = [
     const UserManagementScreen(),
-    const MyTeamScreen(),
-    const MyTeamScreen(),
-    const MyTeamScreen(),
-    const MyTeamScreen(),
-    const MyTeamScreen(),
-    const MyTeamScreen(),
-    const MyTeamScreen(),
+    const AttendanceScreen(),
   ];
 
   @override
@@ -52,7 +46,7 @@ class _DashBoardState extends State<DashBoard> {
     try {
       DocumentSnapshot<Map<String, dynamic>> snapshot = await _firestore
           .collection("AdminUsers")
-          .doc(_auth.currentUser!.uid)
+          .doc(_auth.currentUser!.email)
           .get();
 
       setState(() {
@@ -126,13 +120,13 @@ class _DashBoardState extends State<DashBoard> {
                         }
                       });
                     },
-                    items: <String>['Profile', 'Settings', 'Logout']
+                    items: <String>['Profile', 'Logout']
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(
                           value,
-                          style: TextStyle(color: AppColors.white),
+                          style: const TextStyle(color: AppColors.primaryBlue),
                         ),
                       );
                     }).toList(),
@@ -210,17 +204,17 @@ class _DashBoardState extends State<DashBoard> {
                                 SelectionButtonData(
                                   activeIcon: EvaIcons.grid,
                                   icon: EvaIcons.gridOutline,
-                                  label: "My Team",
+                                  label: "Attendance",
                                 ),
                                 SelectionButtonData(
                                   activeIcon: Icons.energy_savings_leaf,
                                   icon: Icons.energy_savings_leaf_outlined,
-                                  label: "My Leave",
+                                  label: "Manage Leaves",
                                 ),
                                 SelectionButtonData(
                                   activeIcon: EvaIcons.activity,
                                   icon: EvaIcons.activityOutline,
-                                  label: "My Compensation",
+                                  label: "KPI's",
                                   // totalNotif: 20,
                                 ),
                                 SelectionButtonData(
@@ -228,21 +222,21 @@ class _DashBoardState extends State<DashBoard> {
                                   icon: Icons.discount_outlined,
                                   label: "My Learnings",
                                 ),
-                                SelectionButtonData(
-                                  activeIcon: Icons.pages,
-                                  icon: Icons.pages_rounded,
-                                  label: "Alerts",
-                                ),
-                                SelectionButtonData(
-                                  activeIcon: Icons.adjust_sharp,
-                                  icon: Icons.adjust,
-                                  label: "My Calendar",
-                                ),
-                                SelectionButtonData(
-                                  activeIcon: Icons.card_giftcard,
-                                  icon: Icons.card_giftcard_outlined,
-                                  label: "People",
-                                ),
+                                // SelectionButtonData(
+                                //   activeIcon: Icons.pages,
+                                //   icon: Icons.pages_rounded,
+                                //   label: "Alerts",
+                                // ),
+                                // SelectionButtonData(
+                                //   activeIcon: Icons.adjust_sharp,
+                                //   icon: Icons.adjust,
+                                //   label: "My Calendar",
+                                // ),
+                                // SelectionButtonData(
+                                //   activeIcon: Icons.card_giftcard,
+                                //   icon: Icons.card_giftcard_outlined,
+                                //   label: "People",
+                                // ),
                               ],
                               onSelected: (index, value) {
                                 setState(() {

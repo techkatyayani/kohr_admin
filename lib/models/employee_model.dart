@@ -1,3 +1,5 @@
+import 'package:kohr_admin/models/attendance_model.dart';
+
 class Employee {
   String aadharNumber;
   String age;
@@ -6,6 +8,7 @@ class Employee {
   String birthday;
   String confirmationDate;
   String countryCode;
+  String phoneNumber;
   String department;
   String email;
   String employeeCode;
@@ -21,6 +24,9 @@ class Employee {
   String location;
   String middleName;
   String mobile;
+  String homePhoneNumber;
+  String permanentAddress;
+  String correspondenceAddress;
   String name;
   String noticeDuringProbation;
   String noticePeriod;
@@ -31,6 +37,35 @@ class Employee {
   String retirementAge;
   String workEmail;
   String workExperience;
+  String personalEmail;
+  String bloodGroup;
+  String healthInsurancePolicy;
+  String healthInsurancePremium;
+  String accidentalInsurancePolicy;
+  String anniversary;
+  String familyName;
+  String familyRelationship;
+  String familyDateOfBirth;
+  String familyContact;
+  String familyAddress;
+  String degree;
+  String specialization;
+  String college;
+  String degreeTime;
+  String experienceTitle;
+  String experienceLocation;
+  String experienceTime;
+  String experienceDescription;
+  String cardNumber;
+  String beneficiaryName;
+  String panCardNumber;
+  String grossSalary;
+  String ctc;
+  String contractPeriod;
+  String tenureLastDate;
+  String retirementDate;
+  String workMode;
+  List<Attendance> attendanceRecords;
 
   Employee({
     this.aadharNumber = '',
@@ -40,6 +75,7 @@ class Employee {
     this.birthday = '',
     this.confirmationDate = '',
     this.countryCode = '',
+    this.phoneNumber = '',
     this.department = '',
     this.email = '',
     this.employeeCode = '',
@@ -55,6 +91,9 @@ class Employee {
     this.location = '',
     this.middleName = '',
     this.mobile = '',
+    this.homePhoneNumber = '',
+    this.permanentAddress = '',
+    this.correspondenceAddress = '',
     this.name = '',
     this.noticeDuringProbation = '',
     this.noticePeriod = '',
@@ -65,6 +104,35 @@ class Employee {
     this.retirementAge = '',
     this.workEmail = '',
     this.workExperience = '',
+    this.personalEmail = '',
+    this.bloodGroup = '',
+    this.healthInsurancePolicy = '',
+    this.healthInsurancePremium = '',
+    this.accidentalInsurancePolicy = '',
+    this.anniversary = '',
+    this.familyName = '',
+    this.familyRelationship = '',
+    this.familyDateOfBirth = '',
+    this.familyContact = '',
+    this.familyAddress = '',
+    this.degree = '',
+    this.specialization = '',
+    this.college = '',
+    this.degreeTime = '',
+    this.experienceTitle = '',
+    this.experienceLocation = '',
+    this.experienceTime = '',
+    this.experienceDescription = '',
+    this.cardNumber = '',
+    this.beneficiaryName = '',
+    this.panCardNumber = '',
+    this.grossSalary = '',
+    this.ctc = '',
+    this.contractPeriod = '',
+    this.tenureLastDate = '',
+    this.retirementDate = '',
+    this.workMode = '',
+    this.attendanceRecords = const [],
   });
 
   factory Employee.fromMap(Map<String, dynamic> data) {
@@ -76,6 +144,7 @@ class Employee {
       birthday: data['birthday'] ?? '',
       confirmationDate: data['confirmationDate'] ?? '',
       countryCode: data['countryCode'] ?? '',
+      phoneNumber: data['phoneNumber'] ?? '',
       department: data['department'] ?? '',
       email: data['email'] ?? '',
       employeeCode: data['employeeCode'] ?? '',
@@ -91,6 +160,9 @@ class Employee {
       location: data['location'] ?? '',
       middleName: data['middleName'] ?? '',
       mobile: data['mobile'] ?? '',
+      homePhoneNumber: data['homePhoneNumber'] ?? '',
+      permanentAddress: data['permanentAddress'] ?? '',
+      correspondenceAddress: data['correspondenceAddress'] ?? '',
       name: data['name'] ?? '',
       noticeDuringProbation: data['noticeDuringProbation'] ?? '',
       noticePeriod: data['noticePeriod'] ?? '',
@@ -101,6 +173,38 @@ class Employee {
       retirementAge: data['retirementAge'] ?? '',
       workEmail: data['workEmail'] ?? '',
       workExperience: data['workExperience'] ?? '',
+      personalEmail: data['personalEmail'] ?? '',
+      bloodGroup: data['bloodGroup'] ?? '',
+      healthInsurancePolicy: data['healthInsurancePolicy'] ?? '',
+      healthInsurancePremium: data['healthInsurancePremium'] ?? '',
+      accidentalInsurancePolicy: data['accidentalInsurancePolicy'] ?? '',
+      anniversary: data['anniversary'] ?? '',
+      familyName: data['familyName'] ?? '',
+      familyRelationship: data['familyRelationship'] ?? '',
+      familyDateOfBirth: data['familyDateOfBirth'] ?? '',
+      familyContact: data['familyContact'] ?? '',
+      familyAddress: data['familyAddress'] ?? '',
+      degree: data['degree'] ?? '',
+      specialization: data['specialization'] ?? '',
+      college: data['college'] ?? '',
+      degreeTime: data['degreeTime'] ?? '',
+      experienceTitle: data['experienceTitle'] ?? '',
+      experienceLocation: data['experienceLocation'] ?? '',
+      experienceTime: data['experienceTime'] ?? '',
+      experienceDescription: data['experienceDescription'] ?? '',
+      cardNumber: data['cardNumber'] ?? '',
+      beneficiaryName: data['beneficiaryName'] ?? '',
+      panCardNumber: data['panCardNumber'] ?? '',
+      grossSalary: data['grossSalary'] ?? '',
+      ctc: data['ctc'] ?? '',
+      contractPeriod: data['contractPeriod'] ?? '',
+      tenureLastDate: data['tenureLastDate'] ?? '',
+      retirementDate: data['retirementDate'] ?? '',
+      workMode: data['workMode'] ?? '',
+      attendanceRecords: data['attendanceRecords'] != null
+          ? List<Attendance>.from(
+              data['attendanceRecords'].map((item) => Attendance.fromMap(item)))
+          : [],
     );
   }
 
@@ -113,6 +217,7 @@ class Employee {
       'birthday': birthday,
       'confirmationDate': confirmationDate,
       'countryCode': countryCode,
+      'phoneNumber': phoneNumber,
       'department': department,
       'email': email,
       'employeeCode': employeeCode,
@@ -128,6 +233,9 @@ class Employee {
       'location': location,
       'middleName': middleName,
       'mobile': mobile,
+      'homePhoneNumber': homePhoneNumber,
+      'permanentAddress': permanentAddress,
+      'correspondenceAddress': correspondenceAddress,
       'name': name,
       'noticeDuringProbation': noticeDuringProbation,
       'noticePeriod': noticePeriod,
@@ -138,6 +246,36 @@ class Employee {
       'retirementAge': retirementAge,
       'workEmail': workEmail,
       'workExperience': workExperience,
+      'personalEmail': personalEmail,
+      'bloodGroup': bloodGroup,
+      'healthInsurancePolicy': healthInsurancePolicy,
+      'healthInsurancePremium': healthInsurancePremium,
+      'accidentalInsurancePolicy': accidentalInsurancePolicy,
+      'anniversary': anniversary,
+      'familyName': familyName,
+      'familyRelationship': familyRelationship,
+      'familyDateOfBirth': familyDateOfBirth,
+      'familyContact': familyContact,
+      'familyAddress': familyAddress,
+      'degree': degree,
+      'specialization': specialization,
+      'college': college,
+      'degreeTime': degreeTime,
+      'experienceTitle': experienceTitle,
+      'experienceLocation': experienceLocation,
+      'experienceTime': experienceTime,
+      'experienceDescription': experienceDescription,
+      'cardNumber': cardNumber,
+      'beneficiaryName': beneficiaryName,
+      'panCardNumber': panCardNumber,
+      'grossSalary': grossSalary,
+      'ctc': ctc,
+      'contractPeriod': contractPeriod,
+      'tenureLastDate': tenureLastDate,
+      'retirementDate': retirementDate,
+      'workMode': workMode,
+      'attendanceRecords':
+          attendanceRecords.map((item) => item.toMap()).toList(),
     };
   }
 }
