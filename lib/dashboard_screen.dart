@@ -3,7 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:kohr_admin/constants.dart';
-import 'package:kohr_admin/screens/myteam/attendance_screen.dart';
+import 'package:kohr_admin/screens/kpi/kpi_screen.dart';
+import 'package:kohr_admin/screens/manageLeaves/manage_leaves_screen.dart';
+import 'package:kohr_admin/screens/attendance/attendance_screen.dart';
 import 'package:kohr_admin/screens/usermanagement/user_management_screen.dart';
 import 'package:kohr_admin/widgets/selection_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -34,6 +36,8 @@ class _DashBoardState extends State<DashBoard> {
   List<Widget> screens = [
     const UserManagementScreen(),
     const AttendanceScreen(),
+    const ManageLeavesScreen(),
+    const KpiScreen(),
   ];
 
   @override
@@ -217,11 +221,11 @@ class _DashBoardState extends State<DashBoard> {
                                   label: "KPI's",
                                   // totalNotif: 20,
                                 ),
-                                SelectionButtonData(
-                                  activeIcon: Icons.discount,
-                                  icon: Icons.discount_outlined,
-                                  label: "My Learnings",
-                                ),
+                                // SelectionButtonData(
+                                //   activeIcon: Icons.discount,
+                                //   icon: Icons.discount_outlined,
+                                //   label: "My Learnings",
+                                // ),
                                 // SelectionButtonData(
                                 //   activeIcon: Icons.pages,
                                 //   icon: Icons.pages_rounded,

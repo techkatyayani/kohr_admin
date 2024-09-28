@@ -4,7 +4,7 @@ import 'package:kohr_admin/dashboard_screen.dart';
 import 'package:kohr_admin/firebase_options.dart';
 import 'package:kohr_admin/screens/auth/auth_handler.dart';
 import 'package:kohr_admin/screens/auth/login_screen.dart';
-import 'package:kohr_admin/screens/myteam/attendance_details.dart';
+import 'package:kohr_admin/screens/attendance/attendance_details.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

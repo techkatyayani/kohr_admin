@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:kohr_admin/constants.dart';
 import 'package:kohr_admin/models/attendance_model.dart';
 import 'package:kohr_admin/models/employee_model.dart';
-import 'package:kohr_admin/screens/myteam/attendance_details.dart';
+import 'package:kohr_admin/screens/attendance/attendance_details.dart';
 import 'package:page_transition/page_transition.dart';
 
 class AttendanceScreen extends StatefulWidget {
