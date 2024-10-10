@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kohr_admin/constants.dart';
 import 'package:kohr_admin/dashboard_screen.dart';
+import 'package:kohr_admin/screens/auth/forgot_password.dart';
 import 'package:kohr_admin/widgets/bubble.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -330,7 +331,11 @@ class _LoginFormState extends State<LoginForm> {
               alignment: Alignment.center,
               child: TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/forgotPassword');
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ForgotPasswordScreen(),
+                      ));
                 },
                 child: const Text(
                   "Forgot Password?",

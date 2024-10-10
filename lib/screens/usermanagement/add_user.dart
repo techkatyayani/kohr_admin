@@ -241,6 +241,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
         firstName: _firstNameController.text,
         middleName: _middleNameController.text,
         lastName: _lastNameController.text,
+        name: "${_firstNameController.text} ${_lastNameController.text}",
         birthday: _dobController.text,
         gender: _selectedGender ?? '',
         fatherName: _fatherNameController.text,

@@ -24,25 +24,12 @@ class AuthWrapper extends StatelessWidget {
             ),
           );
         } else if (snapshot.hasData && snapshot.data != null) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const DashBoard(),
-              ),
-            );
-          });
+          // User is logged in, show the dashboard
+          return const DashBoard();
         } else {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const LoginScreen(),
-              ),
-            );
-          });
+          // User is not logged in, show the login screen
+          return const LoginScreen();
         }
-        return const SizedBox.shrink();
       },
     );
   }

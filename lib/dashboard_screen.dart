@@ -6,6 +6,7 @@ import 'package:kohr_admin/constants.dart';
 import 'package:kohr_admin/screens/kpi/kpi_screen.dart';
 import 'package:kohr_admin/screens/manageLeaves/manage_leaves_screen.dart';
 import 'package:kohr_admin/screens/attendance/attendance_screen.dart';
+import 'package:kohr_admin/screens/master/master_screen.dart';
 import 'package:kohr_admin/screens/usermanagement/user_management_screen.dart';
 import 'package:kohr_admin/widgets/selection_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -38,6 +39,7 @@ class _DashBoardState extends State<DashBoard> {
     const AttendanceScreen(),
     const ManageLeavesScreen(),
     const KpiScreen(),
+    const MasterScreen(),
   ];
 
   @override
@@ -72,6 +74,7 @@ class _DashBoardState extends State<DashBoard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Row(
@@ -221,11 +224,11 @@ class _DashBoardState extends State<DashBoard> {
                                   label: "KPI's",
                                   // totalNotif: 20,
                                 ),
-                                // SelectionButtonData(
-                                //   activeIcon: Icons.discount,
-                                //   icon: Icons.discount_outlined,
-                                //   label: "My Learnings",
-                                // ),
+                                SelectionButtonData(
+                                  activeIcon: Icons.discount,
+                                  icon: Icons.discount_outlined,
+                                  label: "Master",
+                                ),
                                 // SelectionButtonData(
                                 //   activeIcon: Icons.pages,
                                 //   icon: Icons.pages_rounded,
