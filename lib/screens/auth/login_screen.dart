@@ -1,10 +1,10 @@
+import 'package:Kohr_Admin/constants.dart';
+import 'package:Kohr_Admin/dashboard_screen.dart';
+import 'package:Kohr_Admin/screens/auth/forgot_password.dart';
+import 'package:Kohr_Admin/widgets/bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:kohr_admin/constants.dart';
-import 'package:kohr_admin/dashboard_screen.dart';
-import 'package:kohr_admin/screens/auth/forgot_password.dart';
-import 'package:kohr_admin/widgets/bubble.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

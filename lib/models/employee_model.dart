@@ -1,4 +1,4 @@
-import 'package:kohr_admin/models/attendance_model.dart';
+import 'package:Kohr_Admin/models/attendance_model.dart';
 
 class Employee {
   String aadharNumber;

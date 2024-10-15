@@ -1,5 +1,5 @@
+import 'package:Kohr_Admin/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:kohr_admin/constants.dart';
 
 class CustomTextField extends StatelessWidget {
   final String labelText;
@@ -7,6 +7,7 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
   final TextInputType keyboardType;
   final bool obscureText;
+  final bool enabled; // Add enabled property
 
   const CustomTextField({
     super.key,
@@ -15,6 +16,7 @@ class CustomTextField extends StatelessWidget {
     this.controller,
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
+    this.enabled = true,
   });
 
   @override
@@ -23,14 +25,17 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       keyboardType: keyboardType,
       obscureText: obscureText,
+      enabled: enabled, // Set enabled state here
       decoration: InputDecoration(
         labelText: labelText,
         labelStyle: TextStyle(
-          color: AppColors.primaryBlue.withOpacity(0.4),
+          color: enabled
+              ? AppColors.primaryBlue.withOpacity(0.4)
+              : Colors.grey.withOpacity(0.6), // Grey out label when disabled
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(
-            color: AppColors.primaryBlue,
+          borderSide: BorderSide(
+            color: enabled ? AppColors.primaryBlue : Colors.grey,
             width: 2.0,
           ),
           borderRadius: BorderRadius.circular(10),
@@ -38,9 +43,16 @@ class CustomTextField extends StatelessWidget {
         prefixIcon: icon != null
             ? Icon(
                 icon,
-                color: AppColors.primaryBlue,
+                color: enabled ? AppColors.primaryBlue : Colors.grey,
               )
             : null,
+        disabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.grey.withOpacity(0.6),
+            width: 2.0,
+          ),
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
     );
   }

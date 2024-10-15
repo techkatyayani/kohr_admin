@@ -1,7 +1,7 @@
+import 'package:Kohr_Admin/dashboard_screen.dart';
+import 'package:Kohr_Admin/screens/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:kohr_admin/dashboard_screen.dart';
-import 'package:kohr_admin/screens/auth/login_screen.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});

@@ -1,13 +1,15 @@
 import 'dart:developer';
+import 'package:Kohr_Admin/constants.dart';
+import 'package:Kohr_Admin/models/employee_model.dart';
+import 'package:Kohr_Admin/screens/usermanagement/add_user.dart';
+import 'package:Kohr_Admin/screens/usermanagement/contact_details_screenn.dart';
+import 'package:Kohr_Admin/screens/usermanagement/financial_details.dart';
+import 'package:Kohr_Admin/screens/usermanagement/personal_profile_screen.dart';
+import 'package:Kohr_Admin/screens/usermanagement/professional_profile_screen.dart';
+import 'package:Kohr_Admin/screens/usermanagement/work_profile_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:kohr_admin/constants.dart';
-import 'package:kohr_admin/models/employee_model.dart';
-import 'package:kohr_admin/screens/usermanagement/contact_details_screenn.dart';
-import 'package:kohr_admin/screens/usermanagement/financial_details.dart';
-import 'package:kohr_admin/screens/usermanagement/personal_profile_screen.dart';
-import 'package:kohr_admin/screens/usermanagement/professional_profile_screen.dart';
-import 'package:kohr_admin/screens/usermanagement/work_profile_screen.dart';
+import 'package:page_transition/page_transition.dart';
 
 class UserDetailsScreen extends StatefulWidget {
   final String employeeEmail;
@@ -51,6 +53,45 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
     }
   }
 
+  Future<void> deleteProfile() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('profiles')
+          .doc(widget.employeeEmail)
+          .delete();
+      Navigator.of(context).pop();
+    } catch (e) {
+      print("Error deleting profile: $e");
+    }
+  }
+
+  void showDeleteConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Delete Profile"),
+          content: Text("Are you sure you want to delete this profile?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Dismiss the dialog
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(); // Dismiss the dialog
+                await deleteProfile();
+              },
+              child: Text("Delete", style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -61,6 +102,9 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Employee Profile"),
+      ),
       backgroundColor: AppColors.greyBackground,
       body: isLoading
           ? const Center(
@@ -129,7 +173,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
                                     Row(
                                       children: [
                                         Text(
-                                          employee?.name ?? '',
+                                          "${employee!.firstName} ${employee!.lastName}" ??
+                                              '',
                                           style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 20),
@@ -152,6 +197,30 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
                                         style: const TextStyle(fontSize: 14)),
                                   ],
                                 ),
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors
+                                      .red, // Set the background color to red
+                                ),
+                                onPressed: showDeleteConfirmationDialog,
+                                child: const Text("Delete Profile"),
+                              ),
+                              const SizedBox(width: 20),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                      type: PageTransitionType.fade,
+                                      child: AddUserScreen(
+                                          employee: employee,
+                                          startingStep: 1,
+                                          isEdit: false),
+                                    ),
+                                  );
+                                },
+                                child: const Text("Edit Profile"),
                               ),
                             ],
                           ),

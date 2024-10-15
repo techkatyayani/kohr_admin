@@ -1,9 +1,7 @@
+import 'package:Kohr_Admin/firebase_options.dart';
+import 'package:Kohr_Admin/screens/auth/auth_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:kohr_admin/dashboard_screen.dart';
-import 'package:kohr_admin/firebase_options.dart';
-import 'package:kohr_admin/screens/auth/auth_handler.dart';
-import 'package:kohr_admin/screens/auth/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

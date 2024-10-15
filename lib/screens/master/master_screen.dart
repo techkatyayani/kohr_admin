@@ -1,7 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:Kohr_Admin/constants.dart';
+import 'package:Kohr_Admin/screens/master/master_details.dart';
 import 'package:flutter/material.dart';
-import 'package:kohr_admin/constants.dart';
-import 'package:kohr_admin/screens/master/master_details.dart';
 import 'package:page_transition/page_transition.dart';
 
 class MasterScreen extends StatefulWidget {

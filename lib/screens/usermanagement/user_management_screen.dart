@@ -1,13 +1,13 @@
 import 'dart:developer';
 
+import 'package:Kohr_Admin/constants.dart';
+import 'package:Kohr_Admin/screens/usermanagement/add_user.dart';
+import 'package:Kohr_Admin/screens/usermanagement/user_details_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:kohr_admin/constants.dart';
-import 'package:kohr_admin/screens/usermanagement/add_user.dart';
-import 'package:kohr_admin/screens/usermanagement/user_details_screen.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:page_transition/page_transition.dart';
@@ -113,7 +113,7 @@ class _UserManagementScreenState extends State<UserManagementScreen>
             "middleName": row[1]?.value.toString() ?? "",
             "lastName": row[2]?.value.toString() ?? "",
             "employeeCode": row[3]?.value.toString() ?? "",
-            "name": row[0]?.value.toString() ?? "",
+            "name": "${row[0]!.value} ${row[2]!.value}",
             "gender": row[6]?.value.toString() ?? "",
             "birthday": row[7]?.value.toString() ?? "",
             "fatherName": row[8]?.value.toString() ?? "",

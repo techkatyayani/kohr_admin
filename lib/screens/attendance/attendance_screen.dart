@@ -1,10 +1,10 @@
+import 'package:Kohr_Admin/constants.dart';
+import 'package:Kohr_Admin/models/attendance_model.dart';
+import 'package:Kohr_Admin/models/employee_model.dart';
+import 'package:Kohr_Admin/screens/attendance/attendance_details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:kohr_admin/constants.dart';
-import 'package:kohr_admin/models/attendance_model.dart';
-import 'package:kohr_admin/models/employee_model.dart';
-import 'package:kohr_admin/screens/attendance/attendance_details.dart';
 import 'package:page_transition/page_transition.dart';
 
 class AttendanceScreen extends StatefulWidget {

@@ -1,15 +1,19 @@
+import 'package:Kohr_Admin/constants.dart';
+import 'package:Kohr_Admin/models/employee_model.dart';
+import 'package:Kohr_Admin/services/api_service.dart';
+import 'package:Kohr_Admin/widgets/custom_dropdown.dart';
+import 'package:Kohr_Admin/widgets/custom_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:kohr_admin/constants.dart';
-import 'package:kohr_admin/models/employee_model.dart';
-import 'package:kohr_admin/services/api_service.dart';
-import 'package:kohr_admin/widgets/custom_dropdown.dart';
-import 'package:kohr_admin/widgets/custom_textfield.dart';
 
 class AddUserScreen extends StatefulWidget {
-  const AddUserScreen({super.key});
+  final Employee? employee;
+  final int? startingStep;
+  final bool? isEdit;
+  const AddUserScreen(
+      {super.key, this.employee, this.startingStep, this.isEdit = true});
 
   @override
   State<AddUserScreen> createState() => _AddUserScreenState();
@@ -191,6 +195,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
           firstName: _firstNameController.text,
           middleName: _middleNameController.text,
           lastName: _lastNameController.text,
+          name: fullName,
           employeeCode: _employeeCodeController.text,
           location: _selectedLocation ?? '',
           department: _selectedDepartment ?? '',
@@ -337,6 +342,9 @@ class _AddUserScreenState extends State<AddUserScreen> {
   }
 
   void fetchWorkModes() async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
       // Fetch all collections concurrently using Future.wait
       final results = await Future.wait([
@@ -386,11 +394,113 @@ class _AddUserScreenState extends State<AddUserScreen> {
         _reportingManagers =
             reportManagers.docs.map((doc) => doc['name'] as String).toList();
       });
+      if (widget.employee != null && widget.startingStep != null) {
+        setState(() {
+          _currentStep = widget.startingStep!;
+          // Basic details
+          _firstNameController.text = widget.employee!.firstName;
+          _middleNameController.text = widget.employee!.middleName ?? '';
+          _lastNameController.text = widget.employee!.lastName;
+          _employeeCodeController.text = widget.employee!.employeeCode;
+          _workEmailController.text = widget.employee!.workEmail;
+
+          // Personal Profile
+          _dobController.text = widget.employee!.birthday ?? '';
+          _selectedGender = widget.employee!.gender;
+          _fatherNameController.text = widget.employee!.fatherName ?? '';
+          _ageController.text = widget.employee!.age ?? '';
+          _anniversaryController.text = widget.employee!.anniversary ?? '';
+
+          // Family Details
+          _familyNameController.text = widget.employee!.familyName ?? '';
+          _familyRelationshipController.text =
+              widget.employee!.familyRelationship ?? '';
+          _familyDateOfBirthController.text =
+              widget.employee!.familyDateOfBirth ?? '';
+          _familyContactController.text = widget.employee!.familyContact ?? '';
+          _familyAddresController.text = widget.employee!.familyAddress ?? '';
+
+          // Educational details
+          _degreeController.text = widget.employee!.degree ?? '';
+          _specializationController.text =
+              widget.employee!.specialization ?? '';
+          _collageController.text = widget.employee!.college ?? '';
+          _degreeTimeController.text = widget.employee!.degreeTime ?? '';
+
+          // Work experience
+          _experienceTitleController.text =
+              widget.employee!.experienceTitle ?? '';
+          _experienceLocationController.text =
+              widget.employee!.experienceLocation ?? '';
+          _experienceTimeController.text =
+              widget.employee!.experienceTime ?? '';
+          _experienceDescriptionController.text =
+              widget.employee!.experienceDescription ?? '';
+
+          // Contact details
+          _personalEmailController.text = widget.employee!.personalEmail ?? '';
+          _countryCodeController.text = widget.employee!.countryCode ?? '';
+          _phoneNumberController.text = widget.employee!.phoneNumber ?? '';
+          _homePhoneNumberController.text =
+              widget.employee!.homePhoneNumber ?? '';
+          _permanentAddressController.text =
+              widget.employee!.permanentAddress ?? '';
+          _correspondenceAddressController.text =
+              widget.employee!.correspondenceAddress ?? '';
+          _selectedBloodGroup = widget.employee!.bloodGroup ?? '';
+
+          // Financial details
+          _bankNameController.text = widget.employee!.bankName ?? '';
+          _ifscCodeController.text = widget.employee!.ifscCode ?? '';
+          _beneficiaryNameController.text =
+              widget.employee!.beneficiaryName ?? '';
+          _bankAccountNumberController.text =
+              widget.employee!.bankAccountNumber ?? '';
+          _panCardNumberController.text = widget.employee!.panCardNumber ?? '';
+          _healthInsuarancePolicyController.text =
+              widget.employee!.healthInsurancePolicy ?? '';
+          _healthInsuarancePremiumController.text =
+              widget.employee!.healthInsurancePremium ?? '';
+          _accidentalInsuaranceController.text =
+              widget.employee!.accidentalInsurancePolicy ?? '';
+          _adharCardNumberController.text = widget.employee!.aadharNumber ?? '';
+
+          // Work Profile
+          _selectedLocation = widget.employee!.location ?? '';
+          _selectedDepartment = widget.employee!.department ?? '';
+          _selectedDesignation = widget.employee!.employeeType ?? '';
+          _selectedWorkMode = widget.employee!.workMode ?? '';
+          _joiningDateController.text = widget.employee!.joiningDate ?? '';
+          _cardNumberController.text = widget.employee!.cardNumber ?? '';
+          _workExperienceController.text =
+              widget.employee!.workExperience ?? '';
+          _selectedReportingManager = widget.employee!.reportingManager ?? '';
+          _probationPeriodController.text =
+              widget.employee!.probationPeriod ?? '';
+          _confirmationDateController.text =
+              widget.employee!.confirmationDate ?? '';
+          _ctcController.text = widget.employee!.ctc ?? '';
+          _grossSalaryController.text = widget.employee!.grossSalary ?? '';
+          _noticePeriodController.text = widget.employee!.noticePeriod ?? '';
+          _tenurePeriodController.text = widget.employee!.contractPeriod ?? '';
+          _retirementAgeController.text = widget.employee!.retirementAge ?? '';
+          _tenureLastDateController.text =
+              widget.employee!.tenureLastDate ?? '';
+          _retirementDateController.text =
+              widget.employee!.retirementDate ?? '';
+        });
+      }
 
       print(
           'Data fetched successfully: $_workModes, $_designations, $_departments, $_locations, $_reportingManagers');
+      setState(() {
+        _isLoading = false;
+      });
     } catch (e) {
       print('Error fetching data: $e');
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -405,103 +515,111 @@ class _AddUserScreenState extends State<AddUserScreen> {
     final size = MediaQuery.sizeOf(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add User"),
+        title: widget.isEdit == false
+            ? const Text("Edit Profile")
+            : const Text("Add Profile"),
       ),
-      body: Container(
-        height: double.infinity,
-        color: AppColors.primaryBlue.withOpacity(0.1),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Container(
-                  height: size.height * .08,
-                  padding: const EdgeInsets.symmetric(horizontal: 26),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Container(
+              height: double.infinity,
+              color: AppColors.primaryBlue.withOpacity(0.1),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
                     children: [
-                      _currentStep == 1
-                          ? IconButton(
-                              onPressed: () {
-                                _previousStep();
-                              },
-                              icon: const Icon(Icons.arrow_back_ios),
-                            )
-                          : const SizedBox(),
-                      InkWell(
-                        onTap: _previousStep,
+                      Container(
+                        height: size.height * .08,
+                        padding: const EdgeInsets.symmetric(horizontal: 26),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         child: Row(
                           children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: _currentStep == 0
-                                    ? AppColors.primaryBlue
-                                    : AppColors.primaryBlue.withOpacity(0.2),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Text(
-                                '1',
-                                style: TextStyle(color: Colors.white),
+                            _currentStep == 1
+                                ? IconButton(
+                                    onPressed: () {
+                                      _previousStep();
+                                    },
+                                    icon: const Icon(Icons.arrow_back_ios),
+                                  )
+                                : const SizedBox(),
+                            InkWell(
+                              onTap: _previousStep,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: _currentStep == 0
+                                          ? AppColors.primaryBlue
+                                          : AppColors.primaryBlue
+                                              .withOpacity(0.2),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Text(
+                                      '1',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  const Text("Basic Details"),
+                                ],
                               ),
                             ),
-                            const SizedBox(width: 6),
-                            const Text("Basic Details"),
+                            const SizedBox(width: 10),
+                            const Expanded(
+                              child: Divider(),
+                            ),
+                            const SizedBox(width: 10),
+                            InkWell(
+                              onTap: _nextStep,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: _currentStep == 1
+                                          ? AppColors.primaryBlue
+                                          : AppColors.primaryBlue
+                                              .withOpacity(0.2),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Text(
+                                      '2',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  const Text("Complete Profile"),
+                                ],
+                              ),
+                            ),
+                            const Spacer(flex: 4),
                           ],
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      const Expanded(
-                        child: Divider(),
-                      ),
-                      const SizedBox(width: 10),
-                      InkWell(
-                        onTap: _nextStep,
-                        child: Row(
+                      const SizedBox(height: 6),
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                        child: IndexedStack(
+                          index: _currentStep,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: _currentStep == 1
-                                    ? AppColors.primaryBlue
-                                    : AppColors.primaryBlue.withOpacity(0.2),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Text(
-                                '2',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            const Text("Complete Profile"),
+                            _buildBasicDetailsForm(),
+                            _buildCompleteProfileForm(),
                           ],
                         ),
                       ),
-                      const Spacer(flex: 4),
                     ],
                   ),
                 ),
-                const SizedBox(height: 6),
-                AnimatedSize(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                  child: IndexedStack(
-                    index: _currentStep,
-                    children: [
-                      _buildBasicDetailsForm(),
-                      _buildCompleteProfileForm(),
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -565,11 +683,13 @@ class _AddUserScreenState extends State<AddUserScreen> {
               Expanded(
                 child: CustomDropdown<String>(
                   labelText: "Location",
-                  value: _selectedLocation,
+                  value: _locations.contains(_selectedLocation)
+                      ? _selectedLocation
+                      : null, // Ensure value is valid
                   items: _locations
-                      .map((role) => DropdownMenuItem<String>(
-                            value: role,
-                            child: Text(role),
+                      .map((location) => DropdownMenuItem<String>(
+                            value: location,
+                            child: Text(location),
                           ))
                       .toList(),
                   onChanged: (value) {
@@ -1252,7 +1372,9 @@ class _AddUserScreenState extends State<AddUserScreen> {
               Expanded(
                 child: CustomDropdown<String>(
                   labelText: "Location",
-                  value: _selectedLocation,
+                  value: _selectedLocation == null || _selectedLocation!.isEmpty
+                      ? null // If no work mode is selected, display the hint
+                      : _selectedLocation,
                   items: _locations
                       .map((role) => DropdownMenuItem<String>(
                             value: role,
@@ -1271,6 +1393,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
                 child: CustomTextField(
                   labelText: 'Work Email',
                   controller: _workEmailController,
+                  enabled: widget.isEdit as bool,
                 ),
               ),
             ],
@@ -1281,7 +1404,10 @@ class _AddUserScreenState extends State<AddUserScreen> {
               Expanded(
                 child: CustomDropdown<String>(
                   labelText: 'Department',
-                  value: _selectedDepartment,
+                  value: _selectedDepartment == null ||
+                          _selectedDepartment!.isEmpty
+                      ? null // If no work mode is selected, display the hint
+                      : _selectedDepartment,
                   items: _departments
                       .map(
                         (department) => DropdownMenuItem<String>(
@@ -1301,7 +1427,10 @@ class _AddUserScreenState extends State<AddUserScreen> {
               Expanded(
                 child: CustomDropdown<String>(
                   labelText: 'Designations',
-                  value: _selectedDesignation,
+                  value: _selectedDesignation == null ||
+                          _selectedDesignation!.isEmpty
+                      ? null // If no work mode is selected, display the hint
+                      : _selectedDesignation,
                   items: _designations
                       .map(
                         (designation) => DropdownMenuItem<String>(
@@ -1332,7 +1461,9 @@ class _AddUserScreenState extends State<AddUserScreen> {
               Expanded(
                 child: CustomDropdown<String>(
                   labelText: 'Work Mode',
-                  value: _selectedWorkMode,
+                  value: _selectedWorkMode == null || _selectedWorkMode!.isEmpty
+                      ? null // If no work mode is selected, display the hint
+                      : _selectedWorkMode,
                   items: _workModes
                       .map(
                         (designation) => DropdownMenuItem<String>(
@@ -1409,7 +1540,10 @@ class _AddUserScreenState extends State<AddUserScreen> {
               Expanded(
                 child: CustomDropdown<String>(
                   labelText: 'Reporting Manager',
-                  value: _selectedReportingManager,
+                  value: _selectedReportingManager == null ||
+                          _selectedReportingManager!.isEmpty
+                      ? null // If no work mode is selected, display the hint
+                      : _selectedReportingManager,
                   items: _reportingManagers
                       .map(
                         (designation) => DropdownMenuItem<String>(

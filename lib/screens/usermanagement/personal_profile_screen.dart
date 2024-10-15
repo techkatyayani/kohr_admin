@@ -1,7 +1,7 @@
+import 'package:Kohr_Admin/constants.dart';
+import 'package:Kohr_Admin/models/employee_model.dart';
+import 'package:Kohr_Admin/screens/usermanagement/widgets/label_row.dart';
 import 'package:flutter/material.dart';
-import 'package:kohr_admin/constants.dart';
-import 'package:kohr_admin/models/employee_model.dart';
-import 'package:kohr_admin/screens/usermanagement/widgets/label_row.dart';
 
 class PersonalProfileScreen extends StatefulWidget {
   final Employee? employee;
