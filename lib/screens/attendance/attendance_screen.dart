@@ -204,19 +204,33 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                                     ),
                                   ),
                                   Expanded(
-                                    flex: 9,
+                                    flex: 12,
                                     child: Row(
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            "Clock In Time",
+                                            "Clock In",
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                         Expanded(
                                           child: Text(
-                                            "Clock Out Time",
+                                            "Clock Out",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            "Start Break",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            "Stop Break",
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold),
                                           ),
@@ -258,6 +272,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                                                 employeeName: userData.name,
                                                 employeeWorkMail:
                                                     userData.workEmail,
+                                                selectedDate: formattedDate,
                                               ),
                                               type: PageTransitionType.fade),
                                         );
@@ -295,7 +310,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                                               ),
                                             ),
                                             Expanded(
-                                              flex: 9,
+                                              flex: 12,
                                               child: FutureBuilder<
                                                   DocumentSnapshot>(
                                                 future: filteredDocs[index]
@@ -348,6 +363,16 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                                                             child: Text(formatTime(
                                                                 attendanceData
                                                                     .clockOutTime)),
+                                                          ),
+                                                          Expanded(
+                                                            child: Text(formatTime(
+                                                                attendanceData
+                                                                    .startBreak)),
+                                                          ),
+                                                          Expanded(
+                                                            child: Text(formatTime(
+                                                                attendanceData
+                                                                    .stopBreak)),
                                                           ),
                                                           Expanded(
                                                             child: Text(

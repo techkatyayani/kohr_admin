@@ -7,8 +7,13 @@ import 'package:intl/intl.dart';
 class AttendanceDetails extends StatefulWidget {
   final String employeeWorkMail;
   final String employeeName;
+  final String selectedDate;
+
   const AttendanceDetails(
-      {super.key, required this.employeeWorkMail, required this.employeeName});
+      {super.key,
+      required this.employeeWorkMail,
+      required this.employeeName,
+      required this.selectedDate});
 
   @override
   State<AttendanceDetails> createState() => _AttendanceDetailsState();
@@ -20,7 +25,7 @@ class _AttendanceDetailsState extends State<AttendanceDetails> {
   @override
   void initState() {
     super.initState();
-    formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    formattedDate = widget.selectedDate;
   }
 
   Future<void> _selectDate(BuildContext context) async {

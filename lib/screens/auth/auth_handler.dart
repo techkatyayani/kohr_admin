@@ -25,7 +25,9 @@ class AuthWrapper extends StatelessWidget {
           );
         } else if (snapshot.hasData && snapshot.data != null) {
           // User is logged in, show the dashboard
-          return const DashBoard();
+          return const SelectionArea(
+            child: DashBoard(),
+          );
         } else {
           // User is not logged in, show the login screen
           return const LoginScreen();
