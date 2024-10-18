@@ -3,6 +3,7 @@ import 'package:Kohr_Admin/models/attendance_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 class AttendanceDetails extends StatefulWidget {
   final String employeeWorkMail;
@@ -286,7 +287,34 @@ class _AttendanceDetailsState extends State<AttendanceDetails> {
                       "$label: ",
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    content: Image.network(imageUrl, fit: BoxFit.cover),
+                    content: SizedBox(
+                      width: 300,
+                      height: 300,
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.contain,
+                        loadingBuilder: (BuildContext context, Widget child,
+                            ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Center(
+                            child: Text(
+                              'Image not found or unable to load',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                     actions: <Widget>[
                       TextButton(
                         child: const Text('Close'),

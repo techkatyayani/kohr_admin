@@ -79,13 +79,11 @@ class _DashBoardState extends State<DashBoard> {
         automaticallyImplyLeading: false,
         title: Row(
           children: [
+            const SizedBox(width: 20),
             SizedBox(
               height: 40,
-              width: 40,
-              child: Image.asset('assets/images/kohrlogo.jpg'),
+              child: Image.asset('assets/images/logodashboard.png'),
             ),
-            const SizedBox(width: 8),
-            const Text('Kohr Admin'),
             const Spacer(flex: 1),
             Expanded(
               child: SizedBox(

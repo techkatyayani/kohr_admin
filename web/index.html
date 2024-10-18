@@ -32,12 +32,25 @@
 
   <title>Kohr Admin</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Add this meta tag for CORS -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;">
 </head>
 
 <body>
   <script src="flutter_bootstrap.js" async></script>
-  <script type="text/javascript">
+  <script>
     window.flutterWebRenderer = "html";
+
+    // Add this to allow cross-origin images
+    if (window.trustedTypes && window.trustedTypes.createPolicy) {
+      window.trustedTypes.createPolicy('default', {
+        createHTML: (string) => string,
+        createScriptURL: (string) => string,
+        createScript: (string) => string,
+      });
+    }
   </script>
 </body>
 
