@@ -1,5 +1,6 @@
 import 'package:Kohr_Admin/firebase_options.dart';
 import 'package:Kohr_Admin/screens/auth/auth_handler.dart';
+import 'package:Kohr_Admin/screens/kpi/feedback-screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: false,
       ),
-      home: AuthWrapper(),
+      home: const FeedbackScreen(),
       //   initialRoute: '/',
       //   routes: {
       //     '/': (context) => const AuthWrapper(),

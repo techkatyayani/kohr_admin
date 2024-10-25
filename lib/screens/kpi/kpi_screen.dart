@@ -1,4 +1,5 @@
 import 'package:Kohr_Admin/constants.dart';
+import 'package:Kohr_Admin/screens/kpi/feedback-screen.dart';
 import 'package:Kohr_Admin/screens/kpi/kpi_form_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -101,7 +102,18 @@ class _KpiScreenState extends State<KpiScreen>
                         //   },
                         //   child: const Text("Add User"),
                         // ),
-                        const SizedBox(width: 30),
+                        const SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                PageTransition(
+                                    child: const FeedbackScreen(),
+                                    type: PageTransitionType.fade));
+                          },
+                          child: const Text("Create Feedback Form"),
+                        ),
+                        const SizedBox(width: 10),
                         // ElevatedButton(
                         //   onPressed: () {
                         //     sendMail(
