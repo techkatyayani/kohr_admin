@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: false,
       ),
-      home: const FeedbackScreen(),
+      home: const AuthWrapper(),
       //   initialRoute: '/',
       //   routes: {
       //     '/': (context) => const AuthWrapper(),
