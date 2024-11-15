@@ -45,6 +45,8 @@ dependencies:
   page_transition: ^2.1.0
   csv: ^6.0.0
   path_provider: ^2.1.4
+  multi_select_flutter: ^4.0.0
+  firebase_storage: ^12.3.6
 
 dev_dependencies:
   flutter_lints: ^4.0.0

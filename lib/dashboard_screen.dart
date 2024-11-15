@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:Kohr_Admin/constants.dart';
 import 'package:Kohr_Admin/screens/attendance/attendance_screen.dart';
 import 'package:Kohr_Admin/screens/auth/login_screen.dart';
+import 'package:Kohr_Admin/screens/holidays/holiday_screen.dart';
 import 'package:Kohr_Admin/screens/kpi/feedback-screen.dart';
 import 'package:Kohr_Admin/screens/kpi/kpi_screen.dart';
 import 'package:Kohr_Admin/screens/manageLeaves/manage_leaves_screen.dart';
@@ -36,10 +37,11 @@ class _DashBoardState extends State<DashBoard> {
   }
 
   List<Widget> screens = [
-    const KpiScreen(),
     const UserManagementScreen(),
     const AttendanceScreen(),
     const ManageLeavesScreen(),
+    const HolidayScreen(),
+    const KpiScreen(),
     const MasterScreen(),
     const FeedbackScreen(),
   ];
@@ -219,6 +221,11 @@ class _DashBoardState extends State<DashBoard> {
                                   label: "Manage Leaves",
                                 ),
                                 SelectionButtonData(
+                                  activeIcon: Icons.holiday_village,
+                                  icon: Icons.holiday_village_outlined,
+                                  label: "Holidays",
+                                ),
+                                SelectionButtonData(
                                   activeIcon: EvaIcons.activity,
                                   icon: EvaIcons.activityOutline,
                                   label: "KPI's",
@@ -229,11 +236,12 @@ class _DashBoardState extends State<DashBoard> {
                                   icon: Icons.discount_outlined,
                                   label: "Master",
                                 ),
-                                SelectionButtonData(
-                                  activeIcon: Icons.feedback,
-                                  icon: Icons.feedback_outlined,
-                                  label: "Feedback",
-                                ),
+                                // SelectionButtonData(
+                                //   activeIcon: Icons.feedback,
+                                //   icon: Icons.feedback_outlined,
+                                //   label: "Feedback",
+                                // ),
+
                                 // SelectionButtonData(
                                 //   activeIcon: Icons.adjust_sharp,
                                 //   icon: Icons.adjust,

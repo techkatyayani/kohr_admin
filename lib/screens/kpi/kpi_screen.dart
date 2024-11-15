@@ -1,9 +1,15 @@
+import 'dart:convert';
+import 'dart:developer';
+import 'dart:typed_data';
+import 'package:csv/csv.dart';
+
 import 'package:Kohr_Admin/constants.dart';
 import 'package:Kohr_Admin/screens/kpi/feedback-screen.dart';
 import 'package:Kohr_Admin/screens/kpi/kpi_form_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:file_picker/file_picker.dart';
 
 class KpiScreen extends StatefulWidget {
   const KpiScreen({super.key});
@@ -18,6 +24,82 @@ class _KpiScreenState extends State<KpiScreen>
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = "";
+
+  Future<void> _pickKpiCsv() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['csv'],
+      withData: true,
+    );
+
+    if (result != null) {
+      Uint8List? fileBytes = result.files.first.bytes;
+      if (fileBytes != null) {
+        String csvString = String.fromCharCodes(fileBytes);
+        List<List<dynamic>> fields = CsvToListConverter().convert(csvString);
+
+        if (fields.length >= 2) {
+          // Ensure there's at least a header and one data row
+          // Get the header row (first row)
+          List<String> headers =
+              fields[0].map((e) => e.toString().trim()).toList();
+
+          // Find the index of each required field
+          int workMailIndex = headers.indexOf('Work Mail');
+          int kpiIdIndex = headers.indexOf('KPI ID');
+          int weightageIndex = headers.indexOf('Weightage (%)');
+
+          if (workMailIndex != -1 && kpiIdIndex != -1 && weightageIndex != -1) {
+            // Process each row starting from the second row (index 1)
+            for (var row in fields.skip(1)) {
+              String workMail = row[workMailIndex];
+              String kpiId = row[kpiIdIndex];
+              double weightage =
+                  double.tryParse(row[weightageIndex].toString()) ?? 0;
+
+              // Fetch KPI data
+              Map<String, dynamic> kpiData = await getKpiData(kpiId);
+
+              if (kpiData.isNotEmpty) {
+                double target = double.tryParse(kpiData['target']) ?? 0;
+                double threshold = double.tryParse(kpiData['threshold']) ?? 0;
+                double achieved = double.tryParse(kpiData['achieved']) ?? 0;
+                double weightedTarget = target * (weightage / 100);
+                double weightedThreshold = threshold * (weightage / 100);
+                double weightedAchieved = achieved * (weightage / 100);
+
+                print(
+                    '$workMail: ${weightedTarget.toStringAsFixed(2)} ${weightedThreshold.toStringAsFixed(2)} ${weightedAchieved.toStringAsFixed(2)}');
+              } else {
+                print('$workMail: KPI data not found for $kpiId');
+              }
+            }
+          } else {
+            print('Required columns not found in the CSV file.');
+          }
+        } else {
+          print('The CSV file does not contain enough rows.');
+        }
+      } else {
+        print('Failed to read file content.');
+      }
+    }
+  }
+
+  Future<Map<String, dynamic>> getKpiData(String kpiId) async {
+    try {
+      final kpiDoc = await _firestore.collection('GlobalKpi').doc(kpiId).get();
+      if (kpiDoc.exists) {
+        return kpiDoc.data() as Map<String, dynamic>;
+      } else {
+        print('KPI document not found for ID: $kpiId');
+        return {};
+      }
+    } catch (e) {
+      print('Error fetching KPI data: $e');
+      return {};
+    }
+  }
 
   @override
   void initState() {
@@ -112,6 +194,11 @@ class _KpiScreenState extends State<KpiScreen>
                                     type: PageTransitionType.fade));
                           },
                           child: const Text("Create Feedback Form"),
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: _pickKpiCsv,
+                          child: const Text("KPI CSV"),
                         ),
                         const SizedBox(width: 10),
                         // ElevatedButton(

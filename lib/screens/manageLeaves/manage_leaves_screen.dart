@@ -42,7 +42,7 @@ class _ManageLeavesScreenState extends State<ManageLeavesScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 20, left: 20),
+              padding: const EdgeInsets.only(top: 10, left: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -103,6 +103,27 @@ class _ManageLeavesScreenState extends State<ManageLeavesScreen>
                         ],
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        controller: _searchController,
+                        onChanged: (value) {
+                          setState(() {
+                            _searchTerm = value.toLowerCase();
+                          });
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Search by Employee Name',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          prefixIcon: const Icon(Icons.search),
+                        ),
+                      ),
+                    ),
+                    // const SizedBox(height: 10),
                     SizedBox(
                       height: MediaQuery.sizeOf(context).height * .7,
                       child: TabBarView(
@@ -163,7 +184,7 @@ class _ManageLeavesScreenState extends State<ManageLeavesScreen>
         }).toList();
 
         if (users.isEmpty) {
-          return const Center(child: Text("No users match your search."));
+          return const Center(child: Text("No records available."));
         }
 
         return ListView.builder(
@@ -213,7 +234,17 @@ class _ManageLeavesScreenState extends State<ManageLeavesScreen>
             return const Center(child: Text("No leave requests found."));
           }
 
-          var leaveRequests = snapshot.data!.docs.toList();
+          var leaveRequests = snapshot.data!.docs.where((doc) {
+            var data = doc.data() as Map<String, dynamic>;
+            var employeeName =
+                data['employeeName']?.toString().toLowerCase() ?? '';
+            return employeeName.contains(_searchTerm);
+          }).toList();
+
+          if (leaveRequests.isEmpty) {
+            return const Center(child: Text("No records available."));
+          }
+
           return ListView.builder(
             itemCount: leaveRequests.length,
             itemBuilder: (BuildContext context, int index) {
@@ -319,8 +350,14 @@ class _ManageLeavesScreenState extends State<ManageLeavesScreen>
                                 '$formattedStartDate - $formattedEndDate ',
                               ),
                               Text(
-                                "(${leaveRequest['daysRequested']} Day)",
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                " ${leaveRequest['dayOption']}",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                " (${leaveRequest['daysRequested']} Day)",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
@@ -384,7 +421,10 @@ class _ManageLeavesScreenState extends State<ManageLeavesScreen>
                                       onPressed: () {
                                         _showConfirmationDialog(
                                             leaveRequests[index].id,
-                                            "Approved");
+                                            "Approved",
+                                            leaveRequest['email'],
+                                            leaveRequest['leaveType'],
+                                            leaveRequest['daysRequested']);
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.primaryBlue,
@@ -394,9 +434,13 @@ class _ManageLeavesScreenState extends State<ManageLeavesScreen>
                                     const SizedBox(width: 8),
                                     ElevatedButton(
                                       onPressed: () {
+                                        print(leaveRequest['daysRequested']);
                                         _showConfirmationDialog(
                                             leaveRequests[index].id,
-                                            "Rejected");
+                                            "Rejected",
+                                            leaveRequest['email'],
+                                            leaveRequest['leaveType'],
+                                            leaveRequest['daysRequested']);
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.red,
@@ -420,7 +464,8 @@ class _ManageLeavesScreenState extends State<ManageLeavesScreen>
   }
 
   // Function to show confirmation dialog before updating the status
-  void _showConfirmationDialog(String documentId, String status) {
+  void _showConfirmationDialog(String documentId, String status,
+      String employeeEmail, String leaveType, num daysRequested) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -437,7 +482,8 @@ class _ManageLeavesScreenState extends State<ManageLeavesScreen>
             TextButton(
               child: const Text("Confirm"),
               onPressed: () {
-                _updateLeaveStatus(documentId, status);
+                _updateLeaveStatus(documentId, status, employeeEmail, leaveType,
+                    daysRequested);
                 Navigator.of(context)
                     .pop(); // Close the dialog after confirmation
               },
@@ -449,10 +495,40 @@ class _ManageLeavesScreenState extends State<ManageLeavesScreen>
   }
 
   // Function to update leave status in Firestore
-  void _updateLeaveStatus(String documentId, String status) async {
+  void _updateLeaveStatus(String documentId, String status,
+      String employeeEmail, String leaveType, num daysRequested) async {
     await _firestore
         .collection('leaveRequests')
         .doc(documentId)
         .update({'status': status});
+
+    DocumentReference profileRef = _firestore
+        .collection('profiles')
+        .doc(employeeEmail)
+        .collection('leaveBalances')
+        .doc(leaveType);
+
+    // Get the current leave balance
+    DocumentSnapshot leaveBalanceSnapshot = await profileRef.get();
+    if (leaveBalanceSnapshot.exists) {
+      num currentRequested =
+          leaveBalanceSnapshot['requested'] ?? 0; // Get the days requested
+      num currentUsed = leaveBalanceSnapshot['used'] ?? 0; // Get the days used
+      num currentAccrued =
+          leaveBalanceSnapshot['accrued'] ?? 0; // Get the days accrued
+
+      if (status == "Rejected") {
+        // Subtract the days requested from the current requested balance
+        await profileRef
+            .update({'requested': currentRequested - daysRequested});
+      } else if (status == "Approved") {
+        // Subtract from requested, add to used, and deduct from accrued
+        await profileRef.update({
+          'requested': currentRequested - daysRequested,
+          'used': currentUsed + daysRequested,
+          // 'accrued': currentAccrued - daysRequested,
+        });
+      }
+    }
   }
 }
