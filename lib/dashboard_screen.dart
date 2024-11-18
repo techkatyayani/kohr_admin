@@ -7,6 +7,7 @@ import 'package:Kohr_Admin/screens/kpi/feedback-screen.dart';
 import 'package:Kohr_Admin/screens/kpi/kpi_screen.dart';
 import 'package:Kohr_Admin/screens/manageLeaves/manage_leaves_screen.dart';
 import 'package:Kohr_Admin/screens/master/master_screen.dart';
+import 'package:Kohr_Admin/screens/regularization/regularization_screen.dart';
 import 'package:Kohr_Admin/screens/usermanagement/user_management_screen.dart';
 import 'package:Kohr_Admin/widgets/selection_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -41,6 +42,7 @@ class _DashBoardState extends State<DashBoard> {
     const AttendanceScreen(),
     const ManageLeavesScreen(),
     const HolidayScreen(),
+    const RegularizationScreen(),
     const KpiScreen(),
     const MasterScreen(),
     const FeedbackScreen(),
@@ -224,6 +226,11 @@ class _DashBoardState extends State<DashBoard> {
                                   activeIcon: Icons.holiday_village,
                                   icon: Icons.holiday_village_outlined,
                                   label: "Holidays",
+                                ),
+                                SelectionButtonData(
+                                  activeIcon: Icons.fork_right,
+                                  icon: Icons.fork_right_outlined,
+                                  label: "Regularizations",
                                 ),
                                 SelectionButtonData(
                                   activeIcon: EvaIcons.activity,
