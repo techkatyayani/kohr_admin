@@ -15,6 +15,9 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '360 form/surveyDataScreen.dart';
+import 'FeedBack/DepartmentsScreen.dart';
+
 class DashBoard extends StatefulWidget {
   const DashBoard({super.key});
 
@@ -45,9 +48,11 @@ class _DashBoardState extends State<DashBoard> {
     const RegularizationScreen(),
     const KpiScreen(),
     const MasterScreen(),
-    const FeedbackScreen(),
+    FeedDepartmentScreen(),
+    SurveyDataScreen(),
   ];
 
+  // const FeedbackScreen(),
   @override
   void initState() {
     super.initState();
@@ -243,11 +248,16 @@ class _DashBoardState extends State<DashBoard> {
                                   icon: Icons.discount_outlined,
                                   label: "Master",
                                 ),
-                                // SelectionButtonData(
-                                //   activeIcon: Icons.feedback,
-                                //   icon: Icons.feedback_outlined,
-                                //   label: "Feedback",
-                                // ),
+                                SelectionButtonData(
+                                  activeIcon: Icons.feedback,
+                                  icon: Icons.feedback_outlined,
+                                  label: "Feedback",
+                                ),
+                                SelectionButtonData(
+                                  activeIcon: Icons.feedback,
+                                  icon: Icons.feedback_outlined,
+                                  label: "360 Form",
+                                ),
 
                                 // SelectionButtonData(
                                 //   activeIcon: Icons.adjust_sharp,

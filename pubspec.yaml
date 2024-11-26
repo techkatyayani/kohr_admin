@@ -47,6 +47,7 @@ dependencies:
   path_provider: ^2.1.4
   multi_select_flutter: ^4.0.0
   firebase_storage: ^12.3.6
+  lottie: ^2.5.0
 
 dev_dependencies:
   flutter_lints: ^4.0.0
