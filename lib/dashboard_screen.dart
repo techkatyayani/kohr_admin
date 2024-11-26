@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:Kohr_Admin/constants.dart';
 import 'package:Kohr_Admin/screens/attendance/attendance_screen.dart';
 import 'package:Kohr_Admin/screens/auth/login_screen.dart';
+import 'package:Kohr_Admin/screens/hire/hire_dashboard.dart';
 import 'package:Kohr_Admin/screens/holidays/holiday_screen.dart';
 import 'package:Kohr_Admin/screens/kpi/feedback-screen.dart';
 import 'package:Kohr_Admin/screens/kpi/kpi_screen.dart';
@@ -45,6 +46,8 @@ class _DashBoardState extends State<DashBoard> {
     const RegularizationScreen(),
     const KpiScreen(),
     const MasterScreen(),
+
+    const HireDashboard(),
     const FeedbackScreen(),
   ];
 
@@ -82,6 +85,7 @@ class _DashBoardState extends State<DashBoard> {
     return Scaffold(
       backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
       appBar: AppBar(
+
         automaticallyImplyLeading: false,
         title: Row(
           children: [
@@ -242,6 +246,11 @@ class _DashBoardState extends State<DashBoard> {
                                   activeIcon: Icons.discount,
                                   icon: Icons.discount_outlined,
                                   label: "Master",
+                                ),
+                                SelectionButtonData(
+                                  activeIcon: Icons.analytics,
+                                  icon: Icons.analytics_outlined,
+                                  label: "Hire",
                                 ),
                                 // SelectionButtonData(
                                 //   activeIcon: Icons.feedback,

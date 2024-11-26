@@ -8,6 +8,7 @@ class CustomTextField extends StatelessWidget {
   final TextInputType keyboardType;
   final bool obscureText;
   final bool enabled; // Add enabled property
+  final int? maxLines;
 
   const CustomTextField({
     super.key,
@@ -17,6 +18,7 @@ class CustomTextField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
     this.enabled = true,
+    this.maxLines,
   });
 
   @override
