@@ -18,20 +18,20 @@ class _QuestionReviewScreenState extends State<QuestionReviewScreen> {
   List<Map<String, dynamic>> questions = [];
   List<bool> selectedQuestions = [];
   bool selectAll = false;
-
+  bool isLoading =false;
   KpiFunctions _functions = KpiFunctions();
 
   @override
   void initState() {
     super.initState();
     print('docID : ${widget.responseId}');
-    fetchQuestionsforverification();
+    fetchQuestionsforVerification();
   }
 
-
-  Future<void> fetchQuestionsforverification() async {
+  Future<void> fetchQuestionsforVerification() async {
     final surveyDoc = FirebaseFirestore.instance
-        .collection('360').doc('nu63wFPHMPW0GGpQnRR1')
+        .collection('360')
+        .doc('nu63wFPHMPW0GGpQnRR1')
         .collection('360 Survey Data')
         .doc(widget.responseId);
 
@@ -40,7 +40,8 @@ class _QuestionReviewScreenState extends State<QuestionReviewScreen> {
       final surveyData = snapshot.data();
       setState(() {
         questions = List<Map<String, dynamic>>.from(surveyData?['Questions'] ?? []);
-        selectedQuestions = List<bool>.filled(questions.length, false);
+        // Initialize `selectedQuestions` based on the `verification_status` of each question
+        selectedQuestions = questions.map((q) => q['verification_status'] == 'Verified').toList();
       });
     } else {
       print("Document does not exist in 360 Survey Data collection.");
@@ -52,6 +53,7 @@ class _QuestionReviewScreenState extends State<QuestionReviewScreen> {
       selectAll = !selectAll;
       for (int i = 0; i < selectedQuestions.length; i++) {
         selectedQuestions[i] = selectAll;
+        questions[i]['verification_status'] = selectAll ? 'Verified' : 'Unverified';
       }
     });
   }
@@ -63,12 +65,12 @@ class _QuestionReviewScreenState extends State<QuestionReviewScreen> {
         questions[i]['verification_status'] = 'Verified';
 
         if (questions[i]['question_type'] == 'Employee Rating') {
-          List<Map<String, dynamic>> employeeRatings = List<Map<String, dynamic>>.from(questions[i]['EmployeeRating'] ?? []);
+          List<Map<String, dynamic>> employeeRatings =
+          List<Map<String, dynamic>>.from(questions[i]['EmployeeRating'] ?? []);
 
           for (int j = 0; j < employeeRatings.length; j++) {
-            if (employeeRatings[j]['verification_status'] == 'Verified') {
-              _functions.calculateEmployeeRatingScore(employeeRatings[j], scoreAchieved, widget.responseId);
-            }
+            employeeRatings[j]['verification_status'] = 'Verified';
+            _functions.calculateEmployeeRatingScore(employeeRatings[j], scoreAchieved, widget.responseId);
           }
 
           questions[i]['EmployeeRating'] = employeeRatings;
@@ -80,16 +82,24 @@ class _QuestionReviewScreenState extends State<QuestionReviewScreen> {
       }
     }
 
-    final surveyDoc = FirebaseFirestore.instance.collection('360').doc('nu63wFPHMPW0GGpQnRR1').collection('360 Survey Data').doc(widget.responseId);
+    final surveyDoc = FirebaseFirestore.instance
+        .collection('360')
+        .doc('nu63wFPHMPW0GGpQnRR1')
+        .collection('360 Survey Data')
+        .doc(widget.responseId);
+
     await surveyDoc.update({
       'Questions': questions,
-      'verification_status' : 'Verified'
+      'verification_status': 'Verified',
     });
 
     await _functions.storeScoresInRelevantProfiles(scoreAchieved);
+
+    // Optional: Provide user feedback
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Verification complete')),
+    );
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +114,9 @@ class _QuestionReviewScreenState extends State<QuestionReviewScreen> {
           ),
         ],
       ),
-      body: ListView.builder(
+      body: questions.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
         itemCount: questions.length,
         itemBuilder: (context, index) {
           final question = questions[index];
@@ -113,8 +125,7 @@ class _QuestionReviewScreenState extends State<QuestionReviewScreen> {
           final employeeRatings = List<Map<String, dynamic>>.from(question['EmployeeRating'] ?? []);
 
           bool isEmployeeRating = question['question_type'] == 'Employee Rating';
-
-          final isVerified = question['verification_status'] == 'Verified';
+          final isVerified = selectedQuestions[index];
 
           return Column(
             children: [
@@ -125,8 +136,8 @@ class _QuestionReviewScreenState extends State<QuestionReviewScreen> {
                   value: isVerified,
                   onChanged: (value) {
                     setState(() {
-                      question['verification_status'] = value ? 'Verified' : 'Unverified';
                       selectedQuestions[index] = value;
+                      question['verification_status'] = value ? 'Verified' : 'Unverified';
                     });
                   },
                   activeColor: Colors.green,
@@ -159,12 +170,79 @@ class _QuestionReviewScreenState extends State<QuestionReviewScreen> {
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ElevatedButton(
-          onPressed: verifySelected,
-          child: const Text("Verify Now"),
-        ),
+        child:
+        // ElevatedButton(
+        //   onPressed: verifySelected,
+        //   child: const Text("Verify Now"),
+        // ),
+      //),
+      ElevatedButton(
+        onPressed: isLoading
+            ? null
+            : () async {
+          setState(() {
+            isLoading = true; // Start the loader
+          });
+
+          await Future.delayed(
+              const Duration(seconds: 2)); // Simulate a delay
+
+          setState(() {
+            isLoading = false; // Stop the loader
+          });
+
+          _showConfirmationDialog(
+              context); // Show the confirmation dialog
+        },
+        child: isLoading
+            ? const SizedBox(
+          height: 20,
+          width: 20,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: Colors.white,
+          ),
+        )
+            : const Text("Verify Now"),
+      ),
       ),
     );
   }
+
+  void _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Submission'),
+          content: const Text('Are you sure you want to verify ?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close
+
+              },
+              child: const Text('No'),
+            ),
+            TextButton(
+              onPressed: ()  {
+                verifySelected();
+
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();// Close dialog
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text("Verify  successfully!")),
+                );
+              },
+              child: const Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
+
+
 

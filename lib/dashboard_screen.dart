@@ -90,7 +90,19 @@ class _DashBoardState extends State<DashBoard> {
         automaticallyImplyLeading: false,
         title: Row(
           children: [
-            const SizedBox(width: 20),
+          SizedBox(width: 20,),
+            Image(
+              image: const AssetImage('images/logo_img.webp'),
+              width: 120,
+              height: 80,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.error, size: 100); // Show an error icon if loading fails
+              },
+            ),
+            const SizedBox(width: 5,),
+            const Text("|",style: TextStyle(fontSize: 40),),
+            const SizedBox(width: 5),
             SizedBox(
               height: 40,
               child: Image.asset('assets/images/logodashboard.png'),
@@ -254,8 +266,8 @@ class _DashBoardState extends State<DashBoard> {
                                   label: "Feedback",
                                 ),
                                 SelectionButtonData(
-                                  activeIcon: Icons.feedback,
-                                  icon: Icons.feedback_outlined,
+                                  activeIcon: Icons.rotate_right,
+                                  icon: Icons.rotate_right,
                                   label: "360 Form",
                                 ),
 
