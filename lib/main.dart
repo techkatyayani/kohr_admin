@@ -1,9 +1,12 @@
 import 'package:Kohr_Admin/firebase_options.dart';
 import 'package:Kohr_Admin/screens/auth/auth_handler.dart';
+import 'package:Kohr_Admin/screens/hire/controller/hire_dasbord_provider.dart';
+import 'package:Kohr_Admin/screens/hire/controller/job_application_provider.dart';
 import 'package:Kohr_Admin/screens/kpi/feedback-screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,7 +14,15 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => JobApplicationProvider()),
+        ChangeNotifierProvider(create: (_) => HireDashboardProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
