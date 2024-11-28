@@ -90,16 +90,14 @@ class _DashBoardState extends State<DashBoard> {
         automaticallyImplyLeading: false,
         title: Row(
           children: [
-          SizedBox(width: 20,),
-            Image(
-              image: const AssetImage('images/logo_img.webp'),
-              width: 120,
-              height: 80,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                return const Icon(Icons.error, size: 100); // Show an error icon if loading fails
-              },
+
+          SizedBox(width: 10,),
+            SizedBox(
+              height: 100,
+              width: 140,
+              child: Image.asset('assets/images/katyayani.png'),
             ),
+
             const SizedBox(width: 5,),
             const Text("|",style: TextStyle(fontSize: 40),),
             const SizedBox(width: 5),
