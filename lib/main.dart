@@ -1,5 +1,6 @@
 import 'package:Kohr_Admin/firebase_options.dart';
 import 'package:Kohr_Admin/screens/auth/auth_handler.dart';
+import 'package:Kohr_Admin/screens/hire/controller/applicationProvider.dart';
 import 'package:Kohr_Admin/screens/hire/controller/hire_dasbord_provider.dart';
 import 'package:Kohr_Admin/screens/hire/controller/job_application_provider.dart';
 import 'package:Kohr_Admin/screens/kpi/feedback-screen.dart';
@@ -19,6 +20,8 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => JobApplicationProvider()),
         ChangeNotifierProvider(create: (_) => HireDashboardProvider()),
+        ChangeNotifierProvider(create: (_) => ApplicationProvider()),
+
       ],
       child: const MyApp(),
     ),

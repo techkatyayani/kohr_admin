@@ -52,7 +52,7 @@ class JobApplicationProvider extends ChangeNotifier {
     try {
       // Fetch current job count
       DocumentReference jobIdCounterRef =
-      _firestore.collection('hiring').doc('countJobId');
+      _firestore.collection('Masterdata').doc('countJobId');
       DocumentSnapshot snapshot = await jobIdCounterRef.get();
 
       int jobCount = 1;
@@ -65,6 +65,7 @@ class JobApplicationProvider extends ChangeNotifier {
 
       // Add job entry
       await _firestore.collection('hiring').doc(customJobId).set({
+        'jobId':customJobId,
         'jobTitle': jobTitle,
         'companyName': companyName,
         'location': location,
