@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:Kohr_Admin/constants.dart';
 import 'package:Kohr_Admin/models/attendance_model.dart';
@@ -27,12 +28,19 @@ class _AttendanceScreenState extends State<AttendanceScreen>
   String formattedDate = '';
   bool _isGeneratingCSV = false;
   String? _selectedDepartment = 'All Departments';
+  DateTime _startDate = DateTime.now();
+  DateTime _endDate = DateTime.now();
 
   @override
   void initState() {
     super.initState();
     formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
     _tabController = TabController(length: 2, vsync: this);
+
+    // Set default date range to current day (from 00:00:00)
+    final now = DateTime.now();
+    _startDate = DateTime(now.year, now.month, now.day);
+    _endDate = DateTime(now.year, now.month, now.day);
   }
 
   @override
@@ -42,21 +50,58 @@ class _AttendanceScreenState extends State<AttendanceScreen>
     super.dispose();
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    DateTime initialSelectedDate =
-        DateFormat('yyyy-MM-dd').parse(formattedDate);
-
+  Future<void> _selectStartDate(
+      BuildContext context, StateSetter setState) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: initialSelectedDate,
+      initialDate: _startDate,
       firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
-      helpText: 'Select Date',
+      lastDate: _endDate, // Can't select start date after end date
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColors.primaryBlue,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
-
-    if (picked != null && picked != initialSelectedDate) {
+    if (picked != null && picked != _startDate) {
       setState(() {
-        formattedDate = DateFormat('yyyy-MM-dd').format(picked);
+        _startDate = picked;
+      });
+    }
+  }
+
+  Future<void> _selectEndDate(
+      BuildContext context, StateSetter setState) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _endDate,
+      firstDate: _startDate, // Can't select end date before start date
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColors.primaryBlue,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _endDate) {
+      setState(() {
+        _endDate = picked;
       });
     }
   }
@@ -92,45 +137,294 @@ class _AttendanceScreenState extends State<AttendanceScreen>
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            return AlertDialog(
-              title: const Text('Select Department'),
-              content: DropdownButton<String>(
-                value: _selectedDepartment,
-                items: departments.map((String department) {
-                  return DropdownMenuItem<String>(
-                    value: department,
-                    child: Text(department),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedDepartment = newValue;
-                  });
-                },
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                constraints: const BoxConstraints(maxWidth: 500),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.filter_list,
+                          color: AppColors.primaryBlue,
+                          size: 24,
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          'Export Attendance',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ],
+                    ),
+                    const Divider(height: 24),
+
+                    // Department Selection
+                    const Text(
+                      'Select Department',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: _selectedDepartment,
+                          isExpanded: true,
+                          icon: const Icon(Icons.arrow_drop_down),
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          items: departments.map((String department) {
+                            return DropdownMenuItem<String>(
+                              value: department,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.business,
+                                    size: 18,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(department),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _selectedDepartment = newValue;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Date Range Selection
+                    const Text(
+                      'Select Date Range',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Date Pickers in Row
+                    Row(
+                      children: [
+                        // Start Date Picker
+                        Expanded(
+                          child: InkWell(
+                            onTap: () => _selectStartDate(context, setState),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 12,
+                              ),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey.shade300),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.calendar_today,
+                                    size: 18,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Start Date',
+                                          style: TextStyle(
+                                            color: Colors.grey.shade600,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        Text(
+                                          DateFormat('MMM dd, yyyy')
+                                              .format(_startDate),
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Spacer between date pickers
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Icon(
+                            Icons.arrow_forward,
+                            color: Colors.grey.shade600,
+                            size: 20,
+                          ),
+                        ),
+
+                        // End Date Picker
+                        Expanded(
+                          child: InkWell(
+                            onTap: () => _selectEndDate(context, setState),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 12,
+                              ),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey.shade300),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.calendar_today,
+                                    size: 18,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'End Date',
+                                          style: TextStyle(
+                                            color: Colors.grey.shade600,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        Text(
+                                          DateFormat('MMM dd, yyyy')
+                                              .format(_endDate),
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Quick Date Selection Buttons
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        _QuickDateButton(
+                          label: 'Today',
+                          onPressed: () => setState(() {
+                            final now = DateTime.now();
+                            _startDate = DateTime(now.year, now.month, now.day);
+                            _endDate = DateTime(now.year, now.month, now.day);
+                          }),
+                        ),
+                        _QuickDateButton(
+                          label: 'Last 7 Days',
+                          onPressed: () => setState(() {
+                            final now = DateTime.now();
+                            _endDate = DateTime(now.year, now.month, now.day);
+                            _startDate = DateTime(_endDate.year, _endDate.month,
+                                _endDate.day - 6);
+                          }),
+                        ),
+                        _QuickDateButton(
+                          label: 'Last 30 Days',
+                          onPressed: () => setState(() {
+                            final now = DateTime.now();
+                            _endDate = DateTime(now.year, now.month, now.day);
+                            _startDate = DateTime(_endDate.year, _endDate.month,
+                                _endDate.day - 29);
+                          }),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Action Buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(color: Colors.grey.shade700),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.of(context).pop(_selectedDepartment);
+                            _generateAndDownloadCSV(
+                                _selectedDepartment!, _startDate, _endDate);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryBlue,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                          ),
+                          icon: const Icon(Icons.download),
+                          label: const Text('Export CSV'),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                TextButton(
-                  child: const Text('Generate CSV'),
-                  onPressed: () {
-                    Navigator.of(context).pop(_selectedDepartment);
-                  },
-                ),
-              ],
+              ),
             );
           },
         );
       },
     );
-
-    if (selectedDepartment != null) {
-      _generateAndDownloadCSV(selectedDepartment);
-    }
   }
 
   // Add this function to fetch departments from Firestore
@@ -152,7 +446,9 @@ class _AttendanceScreenState extends State<AttendanceScreen>
   }
 
   // Update the existing _generateAndDownloadCSV function
-  void _generateAndDownloadCSV(String department) async {
+  void _generateAndDownloadCSV(
+      String department, DateTime startDate, DateTime endDate) async {
+    log('Generating CSV for department: $department, startDate: $startDate, endDate: $endDate');
     setState(() {
       _isGeneratingCSV = true;
     });
@@ -180,6 +476,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
 
     List<List<dynamic>> rows = [
       [
+        'Attendance Date',
         'Employee Name',
         'Employee Code',
         'Clock In',
@@ -188,85 +485,124 @@ class _AttendanceScreenState extends State<AttendanceScreen>
         'Stop Break',
         'Break Duration',
         'Work Duration',
-        'Attendance Date',
         'Department',
       ]
     ];
 
-    // Fetch employees based on department selection
-    Query employeesQuery = _firestore.collection('profiles');
-    if (department != 'All Departments') {
-      employeesQuery =
-          employeesQuery.where('department', isEqualTo: department);
-    }
-    QuerySnapshot employeesSnapshot = await employeesQuery.get();
-
-    for (var doc in employeesSnapshot.docs) {
-      Employee userData = Employee.fromMap(doc.data() as Map<String, dynamic>);
-      var attendanceSnapshot =
-          await doc.reference.collection('attendance').doc(formattedDate).get();
-
-      if (attendanceSnapshot.exists) {
-        Attendance attendanceData = Attendance.fromMap(
-            attendanceSnapshot.data() as Map<String, dynamic>);
-        Duration breakDuration = calculateDuration(
-            attendanceData.startBreak, attendanceData.stopBreak);
-        Duration totalWorkDuration = calculateDuration(
-            attendanceData.clockInTime, attendanceData.clockOutTime);
-
-        rows.add([
-          userData.name,
-          userData.employeeCode,
-          formatTime(attendanceData.clockInTime),
-          formatTime(attendanceData.clockOutTime),
-          formatTime(attendanceData.startBreak),
-          formatTime(attendanceData.stopBreak),
-          formatDuration(breakDuration),
-          formatDuration(totalWorkDuration),
-          formattedDate,
-          userData.department,
-        ]);
-      } else {
-        rows.add([
-          userData.name,
-          userData.employeeCode,
-          '-',
-          '-',
-          '-',
-          '-',
-          '-',
-          '-',
-          formattedDate,
-          userData.department,
-        ]);
+    try {
+      // 1. Create sorted date range (newest to oldest)
+      List<String> dateRange = [];
+      for (DateTime date = startDate;
+          date.isBefore(endDate.add(const Duration(days: 1)));
+          date = date.add(const Duration(days: 1))) {
+        dateRange.add(DateFormat('yyyy-MM-dd').format(date));
       }
+      dateRange.sort((a, b) => b.compareTo(a));
+      log('Sorted date range: $dateRange');
+
+      // 2. Fetch all employees
+      Query employeesQuery =
+          _firestore.collection('profiles').orderBy('name', descending: false);
+      if (department != 'All Departments') {
+        employeesQuery =
+            employeesQuery.where('department', isEqualTo: department);
+      }
+      QuerySnapshot employeesSnapshot = await employeesQuery.get();
+
+      // 3. Create a map of employees for quick lookup
+      Map<String, Employee> employeesMap = {};
+      for (var doc in employeesSnapshot.docs) {
+        employeesMap[doc.id] =
+            Employee.fromMap(doc.data() as Map<String, dynamic>);
+      }
+
+      // 4. Process each date
+      for (String date in dateRange) {
+        // Fetch attendance for all employees on this date
+        List<Future<DocumentSnapshot>> attendanceFutures = [];
+        for (var employeeDoc in employeesSnapshot.docs) {
+          attendanceFutures.add(
+              employeeDoc.reference.collection('attendance').doc(date).get());
+        }
+
+        List<DocumentSnapshot> attendanceResults =
+            await Future.wait(attendanceFutures);
+
+        // Process attendance for this date
+        for (int i = 0; i < attendanceResults.length; i++) {
+          var employeeDoc = employeesSnapshot.docs[i];
+          Employee userData = employeesMap[employeeDoc.id]!;
+          var attendanceDoc = attendanceResults[i];
+
+          if (attendanceDoc.exists) {
+            Attendance attendanceData = Attendance.fromMap(
+                attendanceDoc.data() as Map<String, dynamic>);
+            Duration breakDuration = calculateDuration(
+                attendanceData.startBreak, attendanceData.stopBreak);
+            Duration totalWorkDuration = calculateDuration(
+                attendanceData.clockInTime, attendanceData.clockOutTime);
+
+            rows.add([
+              date,
+              userData.name,
+              userData.employeeCode,
+              formatTime(attendanceData.clockInTime),
+              formatTime(attendanceData.clockOutTime),
+              formatTime(attendanceData.startBreak),
+              formatTime(attendanceData.stopBreak),
+              formatDuration(breakDuration),
+              formatDuration(totalWorkDuration),
+              userData.department,
+            ]);
+          } else {
+            rows.add([
+              date,
+              userData.name,
+              userData.employeeCode,
+              '-',
+              '-',
+              '-',
+              '-',
+              '-',
+              '-',
+              userData.department,
+            ]);
+          }
+        }
+      }
+
+      // Generate and download CSV
+      String csv = const ListToCsvConverter().convert(rows);
+      final bytes = utf8.encode(csv);
+      final blob = html.Blob([bytes]);
+      final url = html.Url.createObjectUrlFromBlob(blob);
+      final anchor = html.AnchorElement(href: url)
+        ..setAttribute("download", "attendance_${formattedDate}.csv")
+        ..click();
+
+      html.Url.revokeObjectUrl(url);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              'CSV for ${department == 'All Departments' ? 'all departments' : department} generated successfully!'),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error generating CSV: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      log('Error generating CSV: ${e.toString()}');
+    } finally {
+      Navigator.of(context).pop(); // Close loading dialog
+      setState(() {
+        _isGeneratingCSV = false;
+      });
     }
-
-    String csv = const ListToCsvConverter().convert(rows);
-    final bytes = utf8.encode(csv);
-    final blob = html.Blob([bytes]);
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.AnchorElement(href: url)
-      ..setAttribute("download", "attendance_${formattedDate}.csv")
-      ..click();
-
-    html.Url.revokeObjectUrl(url);
-
-    // Close the loading dialog
-    Navigator.of(context).pop();
-
-    setState(() {
-      _isGeneratingCSV = false;
-    });
-
-    // Show a success message
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-            'CSV for ${department == 'All Departments' ? 'all departments' : department} generated and downloaded successfully!'),
-        duration: const Duration(seconds: 3),
-      ),
-    );
   }
 
   @override
@@ -324,18 +660,29 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                                 ),
                                 filled: true,
                                 fillColor: Colors.white,
-                                prefixIcon: const Icon(Icons.search),
+                                prefixIcon: const Icon(Icons.search,
+                                    color: AppColors.primaryBlue),
+                                hintStyle:
+                                    TextStyle(color: Colors.grey.shade400),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 12),
                               ),
                             ),
                           ),
                         ),
                         Column(
                           children: [
-                            ElevatedButton(
+                            ElevatedButton.icon(
                               onPressed: () {
-                                _selectDate(context);
+                                _selectStartDate(context, setState);
                               },
-                              child: const Text("Select Date"),
+                              icon: const Icon(Icons.calendar_today, size: 18),
+                              label: const Text("Select Date"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primaryBlue,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 12),
+                              ),
                             ),
                             const SizedBox(height: 4),
                             Text(
@@ -347,11 +694,11 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                         const SizedBox(width: 10),
                         Column(
                           children: [
-                            ElevatedButton(
+                            ElevatedButton.icon(
                               onPressed: _isGeneratingCSV
                                   ? null
                                   : _showDepartmentSelectionDialog,
-                              child: _isGeneratingCSV
+                              icon: _isGeneratingCSV
                                   ? const SizedBox(
                                       width: 20,
                                       height: 20,
@@ -362,7 +709,13 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                                                 Colors.white),
                                       ),
                                     )
-                                  : const Text("Download CSV"),
+                                  : const Icon(Icons.download, size: 18),
+                              label: const Text("Download CSV"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primaryBlue,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 12),
+                              ),
                             ),
                             const SizedBox(height: 4),
                             const Text(
@@ -415,10 +768,18 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                                 children: [
                                   Expanded(
                                     flex: 3,
-                                    child: Text(
-                                      "Employee Name",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.person,
+                                            size: 18,
+                                            color: AppColors.primaryBlue),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          "Employee Name",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                   Expanded(
@@ -426,45 +787,99 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                                     child: Row(
                                       children: [
                                         Expanded(
-                                          child: Text(
-                                            "Clock In",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.login,
+                                                  size: 18,
+                                                  color: AppColors.primaryBlue),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                "Clock In",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         Expanded(
-                                          child: Text(
-                                            "Clock Out",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.logout,
+                                                  size: 18,
+                                                  color: AppColors.primaryBlue),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                "Clock Out",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         Expanded(
-                                          child: Text(
-                                            "Start Break",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.coffee,
+                                                  size: 18,
+                                                  color: AppColors.primaryBlue),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                "Start Break",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         Expanded(
-                                          child: Text(
-                                            "Stop Break",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.coffee_outlined,
+                                                  size: 18,
+                                                  color: AppColors.primaryBlue),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                "Stop Break",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         Expanded(
-                                          child: Text(
-                                            "Break Duration",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.timer,
+                                                  size: 18,
+                                                  color: AppColors.primaryBlue),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                "Break Duration",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         Expanded(
-                                          child: Text(
-                                            "Work Duration",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
+                                          child: Row(
+                                            children: [
+                                              Icon(Icons.work_history,
+                                                  size: 18,
+                                                  color: AppColors.primaryBlue),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                "Work Duration",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
@@ -614,6 +1029,35 @@ class _AttendanceScreenState extends State<AttendanceScreen>
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// Add this widget for quick date selection buttons
+class _QuickDateButton extends StatelessWidget {
+  final String label;
+  final VoidCallback onPressed;
+
+  const _QuickDateButton({
+    required this.label,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(color: AppColors.primaryBlue),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(color: AppColors.primaryBlue),
       ),
     );
   }
