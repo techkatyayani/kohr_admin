@@ -47,6 +47,7 @@ dependencies:
   path_provider: ^2.1.4
   multi_select_flutter: ^4.0.0
   firebase_storage: ^12.3.6
+  lottie: ^2.5.0
 
 dev_dependencies:
   flutter_lints: ^4.0.0
@@ -67,6 +68,7 @@ flutter:
   assets:
     - assets/images/
     - assets/fonts/
+    #- assets/images/katyayani.png
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
