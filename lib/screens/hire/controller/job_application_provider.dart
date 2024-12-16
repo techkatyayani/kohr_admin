@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-import '../widgets/animation_check_widget.dart';
+import '../dashboardScreens/MainDashboardScreens/widgets/animation_check_widget.dart';
 
 class JobApplicationProvider extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -9,9 +10,24 @@ class JobApplicationProvider extends ChangeNotifier {
   bool isLoading = false;
   List<String> skills = [];
   String selectedJobType = "Full-time";
-  String selectedExperienceLevel = "Fresher";
+  String selectedExperienceYears= "0";
+  String selectedExperienceMonths='0';
   String selectedEmploymentType = "Permanent";
   String selectedShiftSchedule = "Day shift";
+  String selectedDepartment ="Development Department";
+  String selectedRecruiter = 'Aditi Rajput';
+  String selectedHiringEmployees= '1-5';
+
+
+
+
+  TextEditingController experienceController = TextEditingController();
+  String selectedExperience = '0';  // Store the number of experience (e.g., '2')
+  String selectedExperienceUnit = 'Years';  // 'Years' or 'Months'
+  String get experienceLevel {
+    return '$selectedExperience ${selectedExperienceUnit}';
+  }
+
 
   void addSkill(String skill) {
     if (skill.isNotEmpty) {
@@ -62,9 +78,13 @@ class JobApplicationProvider extends ChangeNotifier {
 
       // Create custom job ID
       String customJobId = 'Hr-$jobCount';
+     // DateTime parsedDate = DateFormat('MM/dd/yyyy hh:mm a').parse(formValidateDate);
+
+
 
       // Add job entry
       await _firestore.collection('hiring').doc(customJobId).set({
+        'futureHiring':true,
         'jobId':customJobId,
         'jobTitle': jobTitle,
         'companyName': companyName,
@@ -72,15 +92,19 @@ class JobApplicationProvider extends ChangeNotifier {
         'skills': skills,
         'salary': salary,
         'jobType': selectedJobType,
-        'experienceLevel': selectedExperienceLevel,
+        'experienceLevel': experienceLevel,
         'employmentType': selectedEmploymentType,
         'shiftSchedule': selectedShiftSchedule,
         'jobDescription': jobDescription,
+        'department':selectedDepartment,
+        'recruiter':selectedRecruiter,
+        'requiredEmployees':selectedHiringEmployees,
         'isPublished': false,
         'publishTime': null,
         'closeHiring': false,
         'closeTime': null,
         'createdAt': FieldValue.serverTimestamp(),
+        //'formValidateDate':  Timestamp.fromDate(parsedDate),
       });
 
       // Update job count

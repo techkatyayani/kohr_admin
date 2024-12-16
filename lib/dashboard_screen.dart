@@ -3,6 +3,7 @@ import 'package:Kohr_Admin/constants.dart';
 import 'package:Kohr_Admin/screens/attendance/attendance_screen.dart';
 import 'package:Kohr_Admin/screens/auth/login_screen.dart';
 import 'package:Kohr_Admin/screens/hire/hire_dashboard.dart';
+import 'package:Kohr_Admin/screens/hire/dashboardScreens/recruitmentScreens/main_recruitment_screen.dart';
 import 'package:Kohr_Admin/screens/holidays/holiday_screen.dart';
 import 'package:Kohr_Admin/screens/kpi/feedback-screen.dart';
 import 'package:Kohr_Admin/screens/kpi/kpi_screen.dart';
@@ -47,7 +48,8 @@ class _DashBoardState extends State<DashBoard> {
     const KpiScreen(),
     const MasterScreen(),
 
-    const HireDashboard(),
+    //  HireDashboard(),
+    // const RecruitmentScreen(),
     const FeedbackScreen(),
   ];
 
@@ -113,6 +115,13 @@ class _DashBoardState extends State<DashBoard> {
               ),
             ),
             const Spacer(),
+            IconButton(
+              onPressed: (){
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HireDashboard()));
+              }
+              , icon: Icon(Icons.analytics_outlined),
+            ),
+            SizedBox(width: 10,),
             Row(
               children: [
                 const CircleAvatar(
@@ -247,15 +256,15 @@ class _DashBoardState extends State<DashBoard> {
                                   icon: Icons.discount_outlined,
                                   label: "Master",
                                 ),
-                                SelectionButtonData(
-                                  activeIcon: Icons.analytics,
-                                  icon: Icons.analytics_outlined,
-                                  label: "Hire",
-                                ),
                                 // SelectionButtonData(
-                                //   activeIcon: Icons.feedback,
-                                //   icon: Icons.feedback_outlined,
-                                //   label: "Feedback",
+                                //   activeIcon: Icons.analytics,
+                                //   icon: Icons.analytics_outlined,
+                                //   label: "Hire",
+                                // ),
+                                // SelectionButtonData(
+                                //   activeIcon: Icons.reduce_capacity_rounded,
+                                //   icon: Icons.reduce_capacity_rounded,
+                                //   label: "Recruitment",
                                 // ),
 
                                 // SelectionButtonData(

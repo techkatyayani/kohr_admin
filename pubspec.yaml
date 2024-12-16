@@ -51,6 +51,10 @@ dependencies:
   provider: ^6.1.2
   url_launcher: ^6.1.7
   lottie: ^2.0.0
+  flutter_datetime_picker_bdaya: ^3.0.2
+  flutter_cached_pdfview: ^0.4.3
+  flutter_data_table: ^0.0.1
+
 
 dev_dependencies:
   flutter_lints: ^4.0.0
