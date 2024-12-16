@@ -3,6 +3,7 @@ import 'package:Kohr_Admin/screens/auth/auth_handler.dart';
 import 'package:Kohr_Admin/screens/hire/controller/applicationProvider.dart';
 import 'package:Kohr_Admin/screens/hire/controller/hire_dasbord_provider.dart';
 import 'package:Kohr_Admin/screens/hire/controller/job_application_provider.dart';
+import 'package:Kohr_Admin/screens/hire/hire_dashboard.dart';
 import 'package:Kohr_Admin/screens/kpi/feedback-screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,6 @@ void main() async {
         ChangeNotifierProvider(create: (_) => JobApplicationProvider()),
         ChangeNotifierProvider(create: (_) => HireDashboardProvider()),
         ChangeNotifierProvider(create: (_) => ApplicationProvider()),
-
       ],
       child: const MyApp(),
     ),
@@ -44,7 +44,8 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: false,
       ),
-      home: const AuthWrapper(),
+      // home: const AuthWrapper(),
+      home: const HireDashboard(),
       //   initialRoute: '/',
       //   routes: {
       //     '/': (context) => const AuthWrapper(),

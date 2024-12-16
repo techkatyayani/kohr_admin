@@ -1,27 +1,30 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class UpdateHRRoundStatus{
-
-  Future<void> updateHRRoundStatus(String jobId, String applicationId, String newStatus) async {
+class UpdateHRRoundStatus {
+  Future<void> updateHRRoundStatus(
+      String jobId, String applicationId, String newStatus) async {
     try {
       await FirebaseFirestore.instance
-          .collection('hiring/$jobId/applications') // Navigate to the specific application
+          .collection(
+              'hiring/$jobId/applications') // Navigate to the specific application
           .doc(applicationId) // Use the applicationId to find the document
-          .update({''
-          'hrRoundStatus': newStatus,
-          'finalStatus': newStatus
-
+          .update({
+        ''
+            'hrRoundStatus': newStatus,
+        'finalStatus': newStatus
       }); // Update the resumeStatus field
-
-
     } catch (e) {
-      print('Error updating HRRound status: $e');
-      throw e;
+      log('Error updating HRRound status: $e');
     }
   }
-  Future<void> updateCandidateHRRoundStatus(
-      BuildContext context, String jobId, String applicationId, String newStatus) async {
+
+  Future<void> updateCandidateHRRoundStatus(BuildContext context, String jobId,
+      String applicationId, String newStatus) async {
     try {
       await updateHRRoundStatus(jobId, applicationId, newStatus);
 
@@ -36,5 +39,4 @@ class UpdateHRRoundStatus{
       );
     }
   }
-
 }

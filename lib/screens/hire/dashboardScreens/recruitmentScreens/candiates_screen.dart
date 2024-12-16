@@ -224,16 +224,19 @@ class CandidatesScreen extends StatefulWidget {
 }
 
 class _CandidatesScreenState extends State<CandidatesScreen>
-    with TickerProviderStateMixin { // Change to TickerProviderStateMixin
+    with TickerProviderStateMixin {
+  // Change to TickerProviderStateMixin
   late TabController _tabController;
-  late TabController _recruitmentTabController; // TabController for Recruitment section
+  late TabController
+      _recruitmentTabController; // TabController for Recruitment section
   List<Map<String, dynamic>> candidates = [];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this); // Main Tabs
-    _recruitmentTabController = TabController(length: 5, vsync: this); // Recruitment Tabs
+    _recruitmentTabController =
+        TabController(length: 5, vsync: this); // Recruitment Tabs
     _fetchCandidates();
   }
 
@@ -279,7 +282,8 @@ class _CandidatesScreenState extends State<CandidatesScreen>
               const SizedBox(width: 5),
               Text(
                 widget.title,
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -310,7 +314,8 @@ class _CandidatesScreenState extends State<CandidatesScreen>
                 indicatorWeight: 2.0,
                 labelColor: Colors.green,
                 unselectedLabelColor: Colors.black,
-                labelStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                labelStyle:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                 unselectedLabelStyle: const TextStyle(fontSize: 18),
               ),
             ),
@@ -355,7 +360,8 @@ class _CandidatesScreenState extends State<CandidatesScreen>
                       ),
                       const SizedBox(width: 10),
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green),
                         onPressed: () {
                           // Implement filter functionality here
                         },
@@ -363,7 +369,8 @@ class _CandidatesScreenState extends State<CandidatesScreen>
                       ),
                       const SizedBox(width: 10),
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green),
                         onPressed: () {
                           // Implement filter functionality here
                         },
@@ -398,9 +405,9 @@ class _CandidatesScreenState extends State<CandidatesScreen>
                     tabs: [
                       Tab(
                         child: Container(
-
-                          color: Color(0xFFF0D8), // Background color for the "Resume" tab
-                          child: Text(
+                          color: const Color(
+                              0xFFF0D8), // Background color for the "Resume" tab
+                          child: const Text(
                             "Resume",
                             style: TextStyle(color: Colors.black),
                           ),
@@ -409,8 +416,9 @@ class _CandidatesScreenState extends State<CandidatesScreen>
                       Tab(
                         child: Container(
                           //padding: EdgeInsets.symmetric(vertical: 10),
-                          color: Color(0xEDDFFE), // Background color for the "Calling" tab
-                          child: Text(
+                          color: const Color(
+                              0xEDDFFE), // Background color for the "Calling" tab
+                          child: const Text(
                             "Calling",
                             style: TextStyle(color: Colors.black),
                           ),
@@ -419,8 +427,9 @@ class _CandidatesScreenState extends State<CandidatesScreen>
                       Tab(
                         child: Container(
                           //padding: EdgeInsets.symmetric(vertical: 10),
-                          color: Color(0xD9E5F8), // Background color for the "Assessment" tab
-                          child: Text(
+                          color: const Color(
+                              0xD9E5F8), // Background color for the "Assessment" tab
+                          child: const Text(
                             "Assessment",
                             style: TextStyle(color: Colors.black),
                           ),
@@ -429,8 +438,9 @@ class _CandidatesScreenState extends State<CandidatesScreen>
                       Tab(
                         child: Container(
                           //padding: EdgeInsets.symmetric(vertical: 10),
-                          color: Color(0xB6EDD7 ), // Background color for the "Technical Round" tab
-                          child: Text(
+                          color: const Color(
+                              0xB6EDD7), // Background color for the "Technical Round" tab
+                          child: const Text(
                             "Technical Round",
                             style: TextStyle(color: Colors.black),
                           ),
@@ -439,8 +449,9 @@ class _CandidatesScreenState extends State<CandidatesScreen>
                       Tab(
                         child: Container(
                           //padding: EdgeInsets.symmetric(vertical: 10),
-                          color: Color(0xF9DDDD), // Background color for the "HR Round" tab
-                          child: Text(
+                          color: const Color(
+                              0xF9DDDD), // Background color for the "HR Round" tab
+                          child: const Text(
                             "HR Round",
                             style: TextStyle(color: Colors.black),
                           ),
@@ -452,7 +463,8 @@ class _CandidatesScreenState extends State<CandidatesScreen>
                     indicatorWeight: 2.0,
                     labelColor: Colors.green,
                     unselectedLabelColor: Colors.black,
-                    labelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    labelStyle: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                     unselectedLabelStyle: const TextStyle(fontSize: 16),
                   ),
                 ),
@@ -460,12 +472,15 @@ class _CandidatesScreenState extends State<CandidatesScreen>
                   child: TabBarView(
                     controller: _recruitmentTabController,
                     children: [
-                      ResumeSelectedCandidateTable(jobId: widget.jobId,data: candidates),
+                      ResumeSelectedCandidateTable(
+                          jobId: widget.jobId, data: candidates),
                       CallCandidateTable(jobId: widget.jobId, data: candidates),
-                      AssesmentCandidateTable(jobId: widget.jobId, data: candidates),
-                      TechnicalCandidateTable(jobId: widget.jobId, data: candidates),
+                      AssesmentCandidateTable(
+                          jobId: widget.jobId, data: candidates),
+                      TechnicalCandidateTable(
+                          jobId: widget.jobId, data: candidates),
                       HRCandidateTable(jobId: widget.jobId, data: candidates),
-                     // Center(child: Text("HR Round rr")),
+                      // Center(child: Text("HR Round rr")),
                     ],
                   ),
                 ),

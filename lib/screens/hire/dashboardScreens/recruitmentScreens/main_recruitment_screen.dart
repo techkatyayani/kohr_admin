@@ -19,7 +19,6 @@ class _RecruitmentScreenState extends State<RecruitmentScreen> {
   String selectedFilter = 'All'; // Default filter selection
   bool showActiveOnly = true;
 
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -29,12 +28,19 @@ class _RecruitmentScreenState extends State<RecruitmentScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Text("Recruitment", style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 24),),
+            const Padding(
+              padding: EdgeInsets.all(12.0),
+              child: Text(
+                "Recruitment",
+                style: TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24),
+              ),
             ),
-            const SizedBox(height: 30,),
-
+            const SizedBox(
+              height: 30,
+            ),
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: Container(
@@ -42,7 +48,7 @@ class _RecruitmentScreenState extends State<RecruitmentScreen> {
                 decoration: BoxDecoration(
                     color: AppColors.white,
                     borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
                         spreadRadius: 1,
                         blurRadius: 2,
@@ -53,19 +59,18 @@ class _RecruitmentScreenState extends State<RecruitmentScreen> {
                 child: Column(
                   children: [
                     // The filter container that will be positioned on top of the main container
-                    Padding(
-                      padding: const EdgeInsets.all(15.0),
+                    const Padding(
+                      padding: EdgeInsets.all(15.0),
                       child: Row(
                         children: [
-                          const Icon(Icons.insert_chart),
-                          const SizedBox(width: 3),
-                          const Text(
+                          Icon(Icons.insert_chart),
+                          SizedBox(width: 3),
+                          Text(
                             "Vacancies",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
-                          const SizedBox(width: 10),
-
+                          SizedBox(width: 10),
                         ],
                       ),
                     ),
@@ -75,8 +80,10 @@ class _RecruitmentScreenState extends State<RecruitmentScreen> {
                           .orderBy('createdAt', descending: true)
                           .snapshots(),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
                         }
 
                         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
@@ -98,20 +105,24 @@ class _RecruitmentScreenState extends State<RecruitmentScreen> {
                         for (var job in jobs) {
                           if (selectedFilter == 'All') {
                             filteredJobs.add(job);
-                          } else if (selectedFilter == 'On Hiring' && job['isPublished'] == true) {
+                          } else if (selectedFilter == 'On Hiring' &&
+                              job['isPublished'] == true) {
                             filteredJobs.add(job);
-                          } else if (selectedFilter == 'Closed Hiring' && job['closeTime'] != null) {
+                          } else if (selectedFilter == 'Closed Hiring' &&
+                              job['closeTime'] != null) {
                             filteredJobs.add(job);
-                          } else if (selectedFilter == 'Future Hiring' && job['futureHiring'] == true) {
+                          } else if (selectedFilter == 'Future Hiring' &&
+                              job['futureHiring'] == true) {
                             filteredJobs.add(job);
                           }
                         }
 
                         return GridView.builder(
                           shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
                             crossAxisSpacing: 16.0,
                             mainAxisSpacing: 16.0,
@@ -123,7 +134,13 @@ class _RecruitmentScreenState extends State<RecruitmentScreen> {
                             // print("jjjj ${job['applicationId']}");
                             return GestureDetector(
                               onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>CandidatesScreen(jobId: job['jobId'], title: job['jobTitle'],)));
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => CandidatesScreen(
+                                              jobId: job['jobId'],
+                                              title: job['jobTitle'],
+                                            )));
                               },
                               child: _buildJobCard(job),
                             );
@@ -140,6 +157,7 @@ class _RecruitmentScreenState extends State<RecruitmentScreen> {
       ),
     );
   }
+
   Widget _buildJobCard(QueryDocumentSnapshot job) {
     final jobTitle = job['jobTitle'];
     final jobDiscription = job['jobDescription'];
@@ -160,7 +178,8 @@ class _RecruitmentScreenState extends State<RecruitmentScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (publishTime != null || closeTime != null) const SizedBox(height: 10),
+            if (publishTime != null || closeTime != null)
+              const SizedBox(height: 10),
             if (publishTime != null)
               Row(
                 children: [
@@ -194,7 +213,7 @@ class _RecruitmentScreenState extends State<RecruitmentScreen> {
             // Job Title
             Text(
               jobTitle,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.green,
@@ -242,8 +261,6 @@ class _RecruitmentScreenState extends State<RecruitmentScreen> {
                 ),
               ],
             ),
-
-
           ],
         ),
       ),
@@ -255,5 +272,4 @@ class _RecruitmentScreenState extends State<RecruitmentScreen> {
     final dateTime = timestamp.toDate();
     return '${dateTime.day}/${dateTime.month}/${dateTime.year} }';
   }
-
 }

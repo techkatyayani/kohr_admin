@@ -17,7 +17,8 @@ class HRCandidateTable extends StatefulWidget {
     required this.jobId,
     this.onResumeTap,
     this.onStatusChange,
-    this.onCheckboxChange, required this.data,
+    this.onCheckboxChange,
+    required this.data,
   }) : super(key: key);
 
   @override
@@ -33,7 +34,7 @@ class _HRCandidateTableState extends State<HRCandidateTable> {
         .collection('hiring/$jobId/applications')
         .where('resumeStatus', isEqualTo: 'Selected')
         .where('callStatus', isEqualTo: 'Received')
-        .where('assessmentStatus', isEqualTo: 'Pass')// Filter by resumeStatus
+        .where('assessmentStatus', isEqualTo: 'Pass') // Filter by resumeStatus
         .where('techRoundStatus', isEqualTo: 'Selected')
         .where('hrRoundStatus', isEqualTo: null)
         .snapshots()
@@ -45,29 +46,6 @@ class _HRCandidateTableState extends State<HRCandidateTable> {
       }).toList();
     });
   }
-  // Stream<List<Map<String, dynamic>>> fetchApplications(String jobId) {
-  //   return FirebaseFirestore.instance
-  //       .collection('hiring/$jobId/applications')
-  //       .where('resumeStatus', isEqualTo: 'Selected')
-  //       .where('callStatus', isEqualTo: 'Received')
-  //      .where('assessmentStatus', isEqualTo: 'Pass')
-  //   .where('techRoundStatus', isEqualTo: 'Selected')
-  //
-  //       .snapshots()
-  //       .map((snapshot) {
-  //     return snapshot.docs.where((doc) {
-  //       final hrRoundStatus = doc['hrRoundStatus'];
-  //       return hrRoundStatus == null || hrRoundStatus== 'Rejected'; // Filter out if callStatus is "Selected"
-  //     }).map((doc) {
-  //       final data = doc.data() as Map<String, dynamic>;
-  //       data['applicationId'] = doc.id; // Add the document ID
-  //       return data;
-  //     }).toList();
-  //   });
-  // }
-  //
-
-
 
   void toggleSelectAll(bool? value, List<Map<String, dynamic>> data) {
     setState(() {
@@ -102,14 +80,13 @@ class _HRCandidateTableState extends State<HRCandidateTable> {
 
   Color _getCallStatusColor(String status) {
     if (status == 'Received') {
-      return Colors.green[800]?? Colors.green;
+      return Colors.green[800] ?? Colors.green;
     } else if (status == 'Not Received') {
       return Colors.red;
     } else {
       return Colors.grey; // Default color
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +102,9 @@ class _HRCandidateTableState extends State<HRCandidateTable> {
         }
 
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No applications found with Selected resume status.'));
+          return const Center(
+              child:
+                  Text('No applications found with Selected resume status.'));
         }
 
         final data = snapshot.data!;
@@ -136,7 +115,7 @@ class _HRCandidateTableState extends State<HRCandidateTable> {
           //   children: [
           //     Text("Resume Selectd Candidates"),
           //     SizedBox(height: 15,),
-          child:  Container(
+          child: Container(
             margin: const EdgeInsets.all(12.0),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -158,8 +137,9 @@ class _HRCandidateTableState extends State<HRCandidateTable> {
                   child: Container(
                     padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
-                      color:Colors.white,
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(5)),
+                      color: Colors.white,
+                      borderRadius:
+                          const BorderRadius.vertical(top: Radius.circular(5)),
                     ),
                     child: Row(
                       children: [
@@ -199,19 +179,23 @@ class _HRCandidateTableState extends State<HRCandidateTable> {
                       if (rowData['submittedAt'] != null) {
                         final timestamp = rowData['submittedAt'];
                         if (timestamp is DateTime) {
-                          formattedDate = DateFormat('dd/MM/yyyy').format(timestamp);
+                          formattedDate =
+                              DateFormat('dd/MM/yyyy').format(timestamp);
                         } else if (timestamp is Timestamp) {
-                          formattedDate = DateFormat('dd/MM/yyyy').format(timestamp.toDate());
+                          formattedDate = DateFormat('dd/MM/yyyy')
+                              .format(timestamp.toDate());
                         }
                       }
-                      return
-                        GestureDetector(
-                          onTap: () {
-                            showCandidateDetails(rowData, widget.jobId);
-                          }, child:
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
-                          decoration: const BoxDecoration(color:Colors.white,),
+                      return GestureDetector(
+                        onTap: () {
+                          showCandidateDetails(rowData, widget.jobId);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 10.0),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                          ),
                           child: Row(
                             children: [
                               SizedBox(
@@ -228,52 +212,85 @@ class _HRCandidateTableState extends State<HRCandidateTable> {
                                   },
                                 ),
                               ),
-                              SizedBox(width: 150, child: Text(formattedDate, textAlign: TextAlign.center)),
+                              SizedBox(
+                                  width: 150,
+                                  child: Text(formattedDate,
+                                      textAlign: TextAlign.center)),
                               SizedBox(
                                 width: 110,
-                                child: Text("${rowData['firstName']} ${rowData['lastName']}",
+                                child: Text(
+                                    "${rowData['firstName']} ${rowData['lastName']}",
                                     textAlign: TextAlign.center),
                               ),
                               SizedBox(width: 10),
-                              SizedBox(width: 130, child: Text(rowData['contactNumber'] ?? "N/A", textAlign: TextAlign.center)),
-
-                              SizedBox(width: 160, child: Text(rowData['email'] ?? "N/A", textAlign: TextAlign.center)),
-                              SizedBox(width: 150, child: Text(rowData['techRoundStatus'] ?? "N/A", textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontWeight: rowData['techRoundStatus'] == 'Selected' ? FontWeight.bold : FontWeight.normal,
-
-                                    color: _getResumeStatusColor(rowData['techRoundStatus'] ?? ""),
-                                  )
-                              )),
-                              SizedBox(width: 150, child: Text(rowData['hrRoundStatus'] ?? "N/A", textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontWeight: rowData['hrRoundStatus'] == 'Selected' ? FontWeight.bold : FontWeight.normal,
-
-                                    color: _getResumeStatusColor(rowData['hrRoundStatus'] ?? ""),
-                                  )
-                              )),
-                              SizedBox(width: 160, child: Text(rowData['finalStatus'] ?? "N/A", textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontWeight: rowData['finalStatus'] == 'Selected' ? FontWeight.bold : FontWeight.normal,
-
-                                    color: _getResumeStatusColor(rowData['finalStatus'] ?? ""),
-                                  )
-                              )),
-                              SizedBox(width: 150, child:
-                              HRRecruiterDropdown(
-                                initialValue: rowData['hrRecruiter'], // Pass the current recruiter value
-                                jobId: widget.jobId, // Pass the jobId
-                                applicationId: rowData['applicationId'], // Pass the applicationId
-                                recruiters: ['Aditi', 'Vaishali', 'KritiKa'], // You can make this dynamic
-                                onChanged: (newRecruiter) {
-                                  // You can handle additional logic here if needed
-                                },
-                              //Text(rowData['recruiter'] ?? "No", textAlign: TextAlign.center
-                              )),
+                              SizedBox(
+                                  width: 130,
+                                  child: Text(rowData['contactNumber'] ?? "N/A",
+                                      textAlign: TextAlign.center)),
+                              SizedBox(
+                                  width: 160,
+                                  child: Text(rowData['email'] ?? "N/A",
+                                      textAlign: TextAlign.center)),
+                              SizedBox(
+                                  width: 150,
+                                  child: Text(
+                                      rowData['techRoundStatus'] ?? "N/A",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontWeight:
+                                            rowData['techRoundStatus'] ==
+                                                    'Selected'
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                        color: _getResumeStatusColor(
+                                            rowData['techRoundStatus'] ?? ""),
+                                      ))),
+                              SizedBox(
+                                  width: 150,
+                                  child: Text(rowData['hrRoundStatus'] ?? "N/A",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontWeight: rowData['hrRoundStatus'] ==
+                                                'Selected'
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                        color: _getResumeStatusColor(
+                                            rowData['hrRoundStatus'] ?? ""),
+                                      ))),
+                              SizedBox(
+                                  width: 160,
+                                  child: Text(rowData['finalStatus'] ?? "N/A",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontWeight:
+                                            rowData['finalStatus'] == 'Selected'
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                        color: _getResumeStatusColor(
+                                            rowData['finalStatus'] ?? ""),
+                                      ))),
+                              SizedBox(
+                                  width: 150,
+                                  child: HRRecruiterDropdown(
+                                    initialValue: rowData[
+                                        'hrRecruiter'], // Pass the current recruiter value
+                                    jobId: widget.jobId, // Pass the jobId
+                                    applicationId: rowData[
+                                        'applicationId'], // Pass the applicationId
+                                    recruiters: [
+                                      'Aditi',
+                                      'Vaishali',
+                                      'KritiKa'
+                                    ], // You can make this dynamic
+                                    onChanged: (newRecruiter) {
+                                      // You can handle additional logic here if needed
+                                    },
+                                    //Text(rowData['recruiter'] ?? "No", textAlign: TextAlign.center
+                                  )),
                             ],
                           ),
                         ),
-                        );
+                      );
                     },
                   ),
                 ),
