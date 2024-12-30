@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:Kohr_Admin/MeetingManagement/meeting_rooms.dart';
 import 'package:Kohr_Admin/constants.dart';
 import 'package:Kohr_Admin/screens/attendance/attendance_screen.dart';
 import 'package:Kohr_Admin/screens/auth/login_screen.dart';
@@ -8,12 +9,14 @@ import 'package:Kohr_Admin/screens/kpi/kpi_screen.dart';
 import 'package:Kohr_Admin/screens/manageLeaves/manage_leaves_screen.dart';
 import 'package:Kohr_Admin/screens/master/master_screen.dart';
 import 'package:Kohr_Admin/screens/regularization/regularization_screen.dart';
+import 'package:Kohr_Admin/screens/attendance/time_management.dart';
 import 'package:Kohr_Admin/screens/usermanagement/user_management_screen.dart';
 import 'package:Kohr_Admin/widgets/selection_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '360 form/surveyDataScreen.dart';
 import 'FeedBack/DepartmentsScreen.dart';
@@ -28,7 +31,7 @@ class DashBoard extends StatefulWidget {
 class _DashBoardState extends State<DashBoard> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool isSidebarExpanded = true;
-  int screenIndex = 0;
+  int? screenIndex ;
   Map<String, dynamic>? _userData;
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
@@ -48,6 +51,8 @@ class _DashBoardState extends State<DashBoard> {
     const RegularizationScreen(),
     const KpiScreen(),
     const MasterScreen(),
+    const TimeManagementScreen(),
+    const MeetingRooms(),
     FeedDepartmentScreen(),
     SurveyDataScreen(),
   ];
@@ -56,7 +61,20 @@ class _DashBoardState extends State<DashBoard> {
   @override
   void initState() {
     super.initState();
+    _loadSavedIndex();
     _fetchUserData();
+  }
+
+  Future<void> _loadSavedIndex() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      screenIndex = prefs.getInt('screenIndex') ?? 0;
+    });
+  }
+
+  Future<void> _saveIndex(int index) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('screenIndex', index);
   }
 
   Future<void> _fetchUserData() async {
@@ -82,6 +100,13 @@ class _DashBoardState extends State<DashBoard> {
     );
   }
 
+  void handleScreenChanged(int index) {
+    setState(() {
+      screenIndex = index;
+    });
+    _saveIndex(index);  // Save the index when it changes
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,16 +115,21 @@ class _DashBoardState extends State<DashBoard> {
         automaticallyImplyLeading: false,
         title: Row(
           children: [
-
-          SizedBox(width: 10,),
+            SizedBox(
+              width: 10,
+            ),
             SizedBox(
               height: 100,
               width: 140,
               child: Image.asset('assets/images/katyayani.png'),
             ),
-
-            const SizedBox(width: 5,),
-            const Text("|",style: TextStyle(fontSize: 40),),
+            const SizedBox(
+              width: 5,
+            ),
+            const Text(
+              "|",
+              style: TextStyle(fontSize: 40),
+            ),
             const SizedBox(width: 5),
             SizedBox(
               height: 40,
@@ -259,6 +289,16 @@ class _DashBoardState extends State<DashBoard> {
                                   label: "Master",
                                 ),
                                 SelectionButtonData(
+                                  activeIcon: Icons.watch_later,
+                                  icon: Icons.watch_later_outlined,
+                                  label: "Time Management",
+                                ),
+                                SelectionButtonData(
+                                  activeIcon: Icons.meeting_room,
+                                  icon: Icons.meeting_room_outlined,
+                                  label: "Meeting Management",
+                                ),
+                                SelectionButtonData(
                                   activeIcon: Icons.feedback,
                                   icon: Icons.feedback_outlined,
                                   label: "Feedback",
@@ -281,12 +321,10 @@ class _DashBoardState extends State<DashBoard> {
                                 // ),
                               ],
                               onSelected: (index, value) {
-                                setState(() {
-                                  screenIndex = index;
-                                });
+                                handleScreenChanged(index);
                                 log("index : $index | label : ${value.label}");
                               },
-                              currentIndex: 0,
+                              currentIndex: screenIndex!,
                             ),
                           ],
                         ),
@@ -304,7 +342,7 @@ class _DashBoardState extends State<DashBoard> {
                 children: [
                   // const SizedBox(height: 20 * (kIsWeb ? 1 : 2)),
                   _buildHeader(),
-                  screens[screenIndex],
+                  screens[screenIndex!],
                 ],
               ),
             ),

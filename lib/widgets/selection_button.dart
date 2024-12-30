@@ -17,16 +17,15 @@ class SelectionButtonData {
 
 class SelectionButton extends StatefulWidget {
   const SelectionButton({
-    this.initialSelected = 0,
     required this.data,
     required this.onSelected,
-    required int currentIndex,
+    required this.currentIndex,
     super.key,
   });
 
-  final int initialSelected;
   final List<SelectionButtonData> data;
   final Function(int index, SelectionButtonData value) onSelected;
+  final int currentIndex;
 
   @override
   State<SelectionButton> createState() => _SelectionButtonState();
@@ -38,7 +37,7 @@ class _SelectionButtonState extends State<SelectionButton> {
   @override
   void initState() {
     super.initState();
-    selected = widget.initialSelected;
+    selected = widget.currentIndex;
   }
 
   @override

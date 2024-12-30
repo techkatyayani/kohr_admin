@@ -50,6 +50,19 @@ class _AttendanceScreenState extends State<AttendanceScreen>
     super.dispose();
   }
 
+  void _selectFormattedDate(BuildContext context, StateSetter setState) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+
+    setState(() {
+      formattedDate = DateFormat('yyyy-MM-dd').format(picked!);
+    });
+  }
+
   Future<void> _selectStartDate(
       BuildContext context, StateSetter setState) async {
     final DateTime? picked = await showDatePicker(
@@ -674,7 +687,8 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                           children: [
                             ElevatedButton.icon(
                               onPressed: () {
-                                _selectStartDate(context, setState);
+                                _selectFormattedDate(context, setState);
+                                // _selectStartDate(context, setState);
                               },
                               icon: const Icon(Icons.calendar_today, size: 18),
                               label: const Text("Select Date"),

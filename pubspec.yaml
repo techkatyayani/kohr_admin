@@ -48,6 +48,8 @@ dependencies:
   multi_select_flutter: ^4.0.0
   firebase_storage: ^12.3.6
   lottie: ^2.5.0
+  animations: ^2.0.7
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_lints: ^4.0.0
