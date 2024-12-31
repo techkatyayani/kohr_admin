@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:Kohr_Admin/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -57,6 +59,7 @@ class _SelectionButtonState extends State<SelectionButton> {
               onPressed: () {
                 widget.onSelected(index, data);
                 setState(() {
+                  log('Selected index: $index');
                   selected = index;
                 });
               },

@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:Kohr_Admin/MeetingManagement/meeting_rooms.dart';
 import 'package:Kohr_Admin/constants.dart';
+import 'package:Kohr_Admin/monthly_lates.dart';
 import 'package:Kohr_Admin/screens/attendance/attendance_screen.dart';
 import 'package:Kohr_Admin/screens/auth/login_screen.dart';
 import 'package:Kohr_Admin/screens/holidays/holiday_screen.dart';
@@ -31,7 +32,7 @@ class DashBoard extends StatefulWidget {
 class _DashBoardState extends State<DashBoard> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool isSidebarExpanded = true;
-  int? screenIndex ;
+  int? screenIndex;
   Map<String, dynamic>? _userData;
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
@@ -52,9 +53,10 @@ class _DashBoardState extends State<DashBoard> {
     const KpiScreen(),
     const MasterScreen(),
     const TimeManagementScreen(),
+    MonthlyLatesScreen(),
     const MeetingRooms(),
     FeedDepartmentScreen(),
-    SurveyDataScreen(),
+    SurveyDataScreen()
   ];
 
   // const FeedbackScreen(),
@@ -104,7 +106,7 @@ class _DashBoardState extends State<DashBoard> {
     setState(() {
       screenIndex = index;
     });
-    _saveIndex(index);  // Save the index when it changes
+    _saveIndex(index); // Save the index when it changes
   }
 
   @override
@@ -293,6 +295,12 @@ class _DashBoardState extends State<DashBoard> {
                                   icon: Icons.watch_later_outlined,
                                   label: "Time Management",
                                 ),
+                                SelectionButtonData(
+                                    activeIcon: Icons
+                                        .system_security_update_good_rounded,
+                                    icon: Icons
+                                        .system_security_update_good_rounded,
+                                    label: "Monthly Lates"),
                                 SelectionButtonData(
                                   activeIcon: Icons.meeting_room,
                                   icon: Icons.meeting_room_outlined,
