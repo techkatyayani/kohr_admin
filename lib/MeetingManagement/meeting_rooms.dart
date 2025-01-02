@@ -173,6 +173,49 @@ class _MeetingRoomsState extends State<MeetingRooms> {
                                           },
                                           tooltip: 'Edit Room',
                                         ),
+                                        IconButton(
+                                          icon: const Icon(Icons.delete,
+                                              color: Colors.red),
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title:
+                                                      const Text('Delete Room'),
+                                                  content: const Text(
+                                                      'Are you sure you want to delete this room?'),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child:
+                                                          const Text('Cancel'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        await _firestore
+                                                            .collection(
+                                                                'MeetingRooms')
+                                                            .doc(room.id)
+                                                            .delete();
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: const Text(
+                                                        'Delete',
+                                                        style: TextStyle(
+                                                          color: Colors.red,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                          tooltip: 'Delete Room',
+                                        ),
                                       ],
                                     ),
                                     const SizedBox(height: 8),

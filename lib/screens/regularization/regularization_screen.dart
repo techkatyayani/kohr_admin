@@ -87,6 +87,7 @@ class _RegularizationScreenState extends State<RegularizationScreen>
                         tabs: const [
                           Tab(text: 'Regularize Requests'),
                         ],
+                
                       ),
                     ),
                     Padding(

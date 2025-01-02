@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:Kohr_Admin/Departments_Policy.dart';
 import 'package:Kohr_Admin/MeetingManagement/meeting_rooms.dart';
 import 'package:Kohr_Admin/constants.dart';
 import 'package:Kohr_Admin/monthly_lates.dart';
@@ -56,7 +57,8 @@ class _DashBoardState extends State<DashBoard> {
     MonthlyLatesScreen(),
     const MeetingRooms(),
     FeedDepartmentScreen(),
-    SurveyDataScreen()
+    SurveyDataScreen(),
+    DepartmentsPolicyScreen(),
   ];
 
   // const FeedbackScreen(),
@@ -317,11 +319,11 @@ class _DashBoardState extends State<DashBoard> {
                                   label: "360 Form",
                                 ),
 
-                                // SelectionButtonData(
-                                //   activeIcon: Icons.adjust_sharp,
-                                //   icon: Icons.adjust,
-                                //   label: "My Calendar",
-                                // ),
+                                SelectionButtonData(
+                                  activeIcon: Icons.adjust_sharp,
+                                  icon: Icons.addchart_sharp,
+                                  label: "Departments Policy",
+                                ),
                                 // SelectionButtonData(
                                 //   activeIcon: Icons.card_giftcard,
                                 //   icon: Icons.card_giftcard_outlined,
