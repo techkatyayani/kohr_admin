@@ -33,11 +33,17 @@ class DashBoard extends StatefulWidget {
 class _DashBoardState extends State<DashBoard> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool isSidebarExpanded = true;
-  int? screenIndex;
+  int? screenIndex = 0;
   Map<String, dynamic>? _userData;
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
   String dropdownValue = 'Profile';
+  final TextEditingController searchController = TextEditingController();
+  final LayerLink _layerLink = LayerLink();
+  OverlayEntry? _overlayEntry;
+  List<SelectionButtonData> allTabs = [];
+  List<SelectionButtonData> filteredTabs = [];
+  final GlobalKey<State<SelectionButton>> _selectionButtonKey = GlobalKey();
 
   void openDrawer() {
     if (scaffoldKey.currentState != null) {
@@ -67,6 +73,91 @@ class _DashBoardState extends State<DashBoard> {
     super.initState();
     _loadSavedIndex();
     _fetchUserData();
+
+    // Initialize allTabs with all menu items
+    allTabs = [
+      SelectionButtonData(
+        activeIcon: EvaIcons.person,
+        icon: EvaIcons.personOutline,
+        label: "Employee Management",
+      ),
+      SelectionButtonData(
+        activeIcon: EvaIcons.grid,
+        icon: EvaIcons.gridOutline,
+        label: "Attendance",
+      ),
+      SelectionButtonData(
+        activeIcon: Icons.energy_savings_leaf,
+        icon: Icons.energy_savings_leaf_outlined,
+        label: "Manage Leaves",
+      ),
+      SelectionButtonData(
+        activeIcon: Icons.holiday_village,
+        icon: Icons.holiday_village_outlined,
+        label: "Holidays",
+      ),
+      SelectionButtonData(
+        activeIcon: Icons.fork_right,
+        icon: Icons.fork_right_outlined,
+        label: "Regularizations",
+      ),
+      SelectionButtonData(
+        activeIcon: EvaIcons.activity,
+        icon: EvaIcons.activityOutline,
+        label: "KPI's",
+      ),
+      SelectionButtonData(
+        activeIcon: Icons.discount,
+        icon: Icons.discount_outlined,
+        label: "Master",
+      ),
+      SelectionButtonData(
+        activeIcon: Icons.watch_later,
+        icon: Icons.watch_later_outlined,
+        label: "Time Management",
+      ),
+      SelectionButtonData(
+        activeIcon: Icons.system_security_update_good_rounded,
+        icon: Icons.system_security_update_good_rounded,
+        label: "Monthly Lates",
+      ),
+      SelectionButtonData(
+        activeIcon: Icons.meeting_room,
+        icon: Icons.meeting_room_outlined,
+        label: "Meeting Management",
+      ),
+      SelectionButtonData(
+        activeIcon: Icons.feedback,
+        icon: Icons.feedback_outlined,
+        label: "Feedback",
+      ),
+      SelectionButtonData(
+        activeIcon: Icons.rotate_right,
+        icon: Icons.rotate_right,
+        label: "360 Form",
+      ),
+      SelectionButtonData(
+        activeIcon: Icons.adjust_sharp,
+        icon: Icons.addchart_sharp,
+        label: "Departments Policy",
+      ),
+    ];
+    filteredTabs = allTabs;
+
+    // Add listener for search
+    searchController.addListener(() {
+      setState(() {
+        filteredTabs = allTabs
+            .where((tab) => tab.label
+                .toLowerCase()
+                .contains(searchController.text.toLowerCase()))
+            .toList();
+        if (_overlayEntry != null) {
+          _overlayEntry?.remove();
+          _showOverlay(context);
+        }
+      });
+    });
   }
 
   Future<void> _loadSavedIndex() async {
@@ -111,6 +202,128 @@ class _DashBoardState extends State<DashBoard> {
     _saveIndex(index); // Save the index when it changes
   }
 
+  void _showOverlay(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final overlayWidth = screenWidth * 0.3;
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Stack(
+        children: [
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: () {
+                _overlayEntry?.remove();
+                _overlayEntry = null;
+              },
+              child: Container(
+                color: Colors.transparent,
+              ),
+            ),
+          ),
+          Positioned(
+            width: overlayWidth.clamp(300.0, 500.0),
+            top: 60,
+            left: (screenWidth - overlayWidth.clamp(300.0, 500.0)) / 2,
+            child: Material(
+              elevation: 8.0,
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height *
+                      0.6, // 60% of screen height
+                  maxWidth: overlayWidth.clamp(300.0, 500.0),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 8.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 6,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (filteredTabs.isEmpty)
+                      Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text(
+                          'No results found',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      )
+                    else
+                      Flexible(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: filteredTabs.length,
+                          itemBuilder: (context, index) {
+                            return Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  int originalIndex = allTabs.indexWhere(
+                                      (tab) =>
+                                          tab.label ==
+                                          filteredTabs[index].label);
+
+                                  setState(() {
+                                    screenIndex = originalIndex;
+                                    if (_selectionButtonKey.currentState !=
+                                        null) {
+                                      (_selectionButtonKey.currentState
+                                              as SelectionButtonState)
+                                          .updateSelection(originalIndex);
+                                    }
+                                  });
+
+                                  _saveIndex(originalIndex);
+                                  searchController.clear();
+                                  _overlayEntry?.remove();
+                                  _overlayEntry = null;
+                                },
+                                child: ListTile(
+                                  leading: Icon(
+                                    filteredTabs[index].icon,
+                                    color: AppColors.primaryBlue,
+                                  ),
+                                  title: Text(
+                                    filteredTabs[index].label,
+                                    style: TextStyle(
+                                      color: Colors.black87,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  hoverColor: Colors.grey.withOpacity(0.1),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    _overlayEntry?.remove();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,21 +352,40 @@ class _DashBoardState extends State<DashBoard> {
               height: 40,
               child: Image.asset('assets/images/logodashboard.png'),
             ),
-            const Spacer(flex: 1),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.15),
             Expanded(
               child: SizedBox(
                 height: 40,
                 child: TextField(
+                  controller: searchController,
                   decoration: InputDecoration(
-                    hintText: 'Search...',
+                    hintText: 'Search menu items...',
+                    hintStyle: TextStyle(color: Colors.grey),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
                     ),
                     filled: true,
                     fillColor: Colors.white,
-                    prefixIcon: const Icon(Icons.search),
+                    prefixIcon:
+                        const Icon(Icons.search, color: AppColors.primaryBlue),
+                    suffixIcon: searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: Icon(Icons.clear, color: Colors.grey),
+                            onPressed: () {
+                              searchController.clear();
+                              _overlayEntry?.remove();
+                              _overlayEntry = null;
+                            },
+                          )
+                        : null,
                   ),
+                  onTap: () {
+                    if (_overlayEntry == null) {
+                      _showOverlay(context);
+                    }
+                  },
+                  onChanged: (_) {},
                 ),
               ),
             ),
@@ -194,6 +426,14 @@ class _DashBoardState extends State<DashBoard> {
                 ),
               ],
             ),
+            // Text(
+            //   allTabs[screenIndex ?? 0].label,
+            //   style: TextStyle(
+            //     fontSize: 20,
+            //     fontWeight: FontWeight.bold,
+            //     color: AppColors.primaryBlue,
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -255,6 +495,7 @@ class _DashBoardState extends State<DashBoard> {
                             ),
                             const SizedBox(height: 20),
                             SelectionButton(
+                              key: _selectionButtonKey,
                               data: [
                                 SelectionButtonData(
                                   activeIcon: EvaIcons.person,
@@ -334,7 +575,7 @@ class _DashBoardState extends State<DashBoard> {
                                 handleScreenChanged(index);
                                 log("index : $index | label : ${value.label}");
                               },
-                              currentIndex: screenIndex!,
+                              currentIndex: screenIndex ?? 0,
                             ),
                           ],
                         ),

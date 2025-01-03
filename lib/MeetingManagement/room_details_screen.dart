@@ -20,13 +20,18 @@ class RoomDetailsScreen extends StatelessWidget {
     print('Current roomData: $roomData');
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
+        elevation: 0,
         title: Text(
           'Meeting Room ${roomData['roomName']}',
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-        backgroundColor: Color(0xff09254A),
+        backgroundColor: const Color(0xff09254A),
       ),
       body: Column(
         children: [
@@ -36,6 +41,7 @@ class RoomDetailsScreen extends StatelessWidget {
               stream: FirebaseFirestore.instance
                   .collection('MeetingBookings')
                   .where('roomId', isEqualTo: correctRoomId)
+                  .orderBy('meetingDateTime', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
                 print('==================== DEBUG INFO ====================');
@@ -108,17 +114,19 @@ class RoomDetailsScreen extends StatelessWidget {
   Widget _buildRoomInfoCard() {
     return Card(
       margin: const EdgeInsets.all(16),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 4,
+      shadowColor: Colors.black12,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.blue.shade50, Colors.white],
+            colors: [const Color(0xFFE3F2FD), Colors.white],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
+          borderRadius: BorderRadius.circular(16),
         ),
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -174,175 +182,173 @@ class RoomDetailsScreen extends StatelessWidget {
         List<Map<String, dynamic>>.from(meeting['members'] ?? []);
     final bool isEnded = meeting['ended'] ?? false;
 
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 600),
-        child: Card(
-          margin: const EdgeInsets.only(bottom: 8),
-          elevation: 1.5,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  isEnded ? Colors.grey.shade50 : Colors.orange.shade50,
-                  Colors.white,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 2,
+      shadowColor: Colors.black12,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              isEnded ? Colors.grey.shade50 : const Color(0xFFFFF3E0),
+              Colors.white,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 16,
-                      backgroundColor: Colors.orange,
-                      child: Text(
-                        (meeting['hostName'] ?? '?')[0].toUpperCase(),
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 14),
-                      ),
+                CircleAvatar(
+                  radius: 20,
+                  backgroundColor: const Color(0xFFFF9800),
+                  child: Text(
+                    (meeting['hostName'] ?? '?')[0].toUpperCase(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            meeting['meetingTitle'] ?? 'Untitled Meeting',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            '${meeting['hostName']} • ${meeting['department'] ?? 'No Department'} • ${meeting['channel'] ?? 'No Channel'}',
-                            style: const TextStyle(
-                                color: Colors.grey, fontSize: 12),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        isEnded ? 'Ended' : 'Scheduled',
-                        style: TextStyle(
-                          color: isEnded ? Colors.grey : Colors.green,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Icon(Icons.access_time, color: Colors.grey, size: 14),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${_formatTime(meeting['timings']['startTiming'])} - ${_formatTime(meeting['timings']['endTiming'])}',
-                      style: TextStyle(color: Colors.grey[800], fontSize: 12),
-                    ),
-                    const SizedBox(width: 12),
-                    Icon(Icons.calendar_today, color: Colors.grey, size: 14),
-                    const SizedBox(width: 4),
-                    Text(
-                      _formatDate(meeting['meetingDateTime']),
-                      style: TextStyle(color: Colors.grey[800], fontSize: 12),
-                    ),
-                  ],
-                ),
-                if (coHosts.isNotEmpty || members.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Column(
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (coHosts.isNotEmpty) ...[
-                        Text('Co-Hosts:',
-                            style: TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.bold)),
-                        Wrap(
-                          spacing: 4,
-                          runSpacing: 0,
-                          children: coHosts
-                              .map((coHost) => Chip(
-                                    visualDensity: VisualDensity(
-                                        horizontal: -4, vertical: -4),
-                                    label: Text(coHost['name'],
-                                        style: TextStyle(fontSize: 11)),
-                                    padding: EdgeInsets.zero,
-                                    materialTapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                    backgroundColor: Colors.grey[200],
-                                  ))
-                              .toList(),
+                      Text(
+                        meeting['meetingTitle'] ?? 'Untitled Meeting',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
-                      if (members.isNotEmpty) ...[
-                        const SizedBox(height: 4),
-                        Text('Members:',
-                            style: TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.bold)),
-                        Wrap(
-                          spacing: 4,
-                          runSpacing: 0,
-                          children: members
-                              .map((member) => Chip(
-                                    visualDensity: VisualDensity(
-                                        horizontal: -4, vertical: -4),
-                                    label: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          member['name'],
-                                          style: TextStyle(fontSize: 11),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 4, vertical: 1),
-                                          decoration: BoxDecoration(
-                                            color: _getStatusColor(
-                                                member['status']),
-                                            borderRadius:
-                                                BorderRadius.circular(3),
-                                          ),
-                                          child: Text(
-                                            member['status'] ?? 'pending',
-                                            style: TextStyle(
-                                                fontSize: 9,
-                                                color: Colors.white),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    padding: EdgeInsets.zero,
-                                    materialTapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                    backgroundColor: member['isAvailable']
-                                        ? Colors.green[100]
-                                        : Colors.red[100],
-                                  ))
-                              .toList(),
-                        ),
-                      ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '${meeting['hostName']} • ${meeting['department'] ?? 'No Department'} • ${meeting['channel'] ?? 'No Channel'}',
+                        style:
+                            const TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
                     ],
                   ),
-                ],
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    isEnded ? 'Ended' : 'Scheduled',
+                    style: TextStyle(
+                      color: isEnded ? Colors.grey : Colors.green,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
               ],
             ),
-          ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.access_time, color: Colors.grey, size: 14),
+                const SizedBox(width: 4),
+                Text(
+                  '${_formatTime(meeting['timings']['startTiming'])} - ${_formatTime(meeting['timings']['endTiming'])}',
+                  style: TextStyle(color: Colors.grey[800], fontSize: 12),
+                ),
+                const SizedBox(width: 12),
+                Icon(Icons.calendar_today, color: Colors.grey, size: 14),
+                const SizedBox(width: 4),
+                Text(
+                  _formatDate(meeting['meetingDateTime']),
+                  style: TextStyle(color: Colors.grey[800], fontSize: 12),
+                ),
+              ],
+            ),
+            if (coHosts.isNotEmpty || members.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (coHosts.isNotEmpty) ...[
+                    Text('Co-Hosts:',
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.bold)),
+                    Wrap(
+                      spacing: 4,
+                      runSpacing: 0,
+                      children: coHosts
+                          .map((coHost) => Chip(
+                                visualDensity:
+                                    VisualDensity(horizontal: -4, vertical: -4),
+                                label: Text(coHost['name'],
+                                    style: TextStyle(fontSize: 11)),
+                                padding: EdgeInsets.zero,
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                                backgroundColor: Colors.grey[200],
+                              ))
+                          .toList(),
+                    ),
+                  ],
+                  if (members.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text('Members:',
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.bold)),
+                    Wrap(
+                      spacing: 4,
+                      runSpacing: 0,
+                      children: members
+                          .map((member) => Chip(
+                                visualDensity:
+                                    VisualDensity(horizontal: -4, vertical: -4),
+                                label: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      member['name'],
+                                      style: TextStyle(fontSize: 11),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 4, vertical: 1),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            _getStatusColor(member['status']),
+                                        borderRadius: BorderRadius.circular(3),
+                                      ),
+                                      child: Text(
+                                        member['status'] ?? 'pending',
+                                        style: TextStyle(
+                                            fontSize: 9, color: Colors.white),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                padding: EdgeInsets.zero,
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                                backgroundColor: member['isAvailable']
+                                    ? Colors.green[100]
+                                    : Colors.red[100],
+                              ))
+                          .toList(),
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          ],
         ),
       ),
     );

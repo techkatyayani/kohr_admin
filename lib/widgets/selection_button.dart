@@ -30,16 +30,17 @@ class SelectionButton extends StatefulWidget {
   final int currentIndex;
 
   @override
-  State<SelectionButton> createState() => _SelectionButtonState();
+  State<SelectionButton> createState() => SelectionButtonState();
 }
 
-class _SelectionButtonState extends State<SelectionButton> {
+class SelectionButtonState extends State<SelectionButton> {
   late int selected;
 
   @override
   void initState() {
     super.initState();
     selected = widget.currentIndex;
+    log("selected : $selected");
   }
 
   @override
@@ -69,6 +70,12 @@ class _SelectionButtonState extends State<SelectionButton> {
         );
       }).toList(),
     );
+  }
+
+  void updateSelection(int index) {
+    setState(() {
+      selected = index;
+    });
   }
 }
 

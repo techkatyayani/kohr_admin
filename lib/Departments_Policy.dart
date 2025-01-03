@@ -1,3 +1,4 @@
+import 'package:Kohr_Admin/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -11,83 +12,149 @@ class DepartmentsPolicyScreen extends StatefulWidget {
 
 class _DepartmentsPolicyScreenState extends State<DepartmentsPolicyScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: _firestore
-          .collection('Masterdata')
-          .doc('collections')
-          .collection('Departments')
-          .snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError) {
-          return Center(
-            child: Container(
-              padding: EdgeInsets.all(16.0),
-              child: Text('Error: ${snapshot.error}'),
-            ),
-          );
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Center(
-            child: Container(
-              padding: EdgeInsets.all(16.0),
-              child: Text('No departments found'),
-            ),
-          );
-        }
-
-        return ListView.builder(
-          shrinkWrap: true,
-          padding: EdgeInsets.all(8.0),
-          itemCount: snapshot.data!.docs.length,
-          itemBuilder: (context, index) {
-            final DocumentSnapshot document = snapshot.data!.docs[index];
-            final Map<String, dynamic> data =
-                document.data() as Map<String, dynamic>;
-
-            String departmentName = data['name'] ?? 'Unnamed Department';
-
-            return Container(
-              constraints: BoxConstraints(minHeight: 60),
-              child: Card(
-                margin: EdgeInsets.symmetric(vertical: 4.0),
-                child: ListTile(
-                  contentPadding: EdgeInsets.all(8.0),
-                  title: Text(
-                    departmentName,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Text(
-                    data['policyLink'] != null
-                        ? 'Policy Link Available'
-                        : 'No Policy Link',
-                  ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () => _showEditDialog(document),
-                  ),
-                  onTap: () {
-                    if (data['policyLink'] != null) {
-                      _handlePolicyTap(data['policyLink']);
-                    }
-                  },
+    return SizedBox(
+      width: double.infinity,
+      height: MediaQuery.of(context).size.height - 100,
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(bottom: 16.0),
+              child: Text(
+                'Departments Policy',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            );
-          },
-        );
-      },
+            ),
+            Container(
+              height: 40,
+              margin: const EdgeInsets.only(bottom: 16),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search departments...',
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[100],
+                  prefixIcon:
+                      const Icon(Icons.search, color: AppColors.primaryBlue),
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear, color: Colors.grey),
+                          onPressed: () {
+                            setState(() {
+                              _searchController.clear();
+                              _searchQuery = '';
+                            });
+                          },
+                        )
+                      : null,
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value.toLowerCase();
+                  });
+                },
+              ),
+            ),
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _firestore
+                    .collection('Masterdata')
+                    .doc('collections')
+                    .collection('Departments')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Error: ${snapshot.error}'),
+                    );
+                  }
+
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(
+                      child: Text('No departments found'),
+                    );
+                  }
+
+                  final filteredDocs = snapshot.data!.docs.where((doc) {
+                    final data = doc.data() as Map<String, dynamic>;
+                    final name = (data['name'] ?? '').toString().toLowerCase();
+                    return name.contains(_searchQuery);
+                  }).toList();
+
+                  return ListView.builder(
+                    itemCount: filteredDocs.length,
+                    itemBuilder: (context, index) {
+                      final DocumentSnapshot document = filteredDocs[index];
+                      final Map<String, dynamic> data =
+                          document.data() as Map<String, dynamic>;
+                      final String departmentName =
+                          data['name'] ?? 'Unnamed Department';
+
+                      return Container(
+                        constraints: const BoxConstraints(minHeight: 60),
+                        child: Card(
+                          margin: const EdgeInsets.symmetric(vertical: 4.0),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.all(8.0),
+                            title: Text(
+                              departmentName,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text(
+                              data['policyLink'] != null
+                                  ? 'Policy Link Available'
+                                  : 'No Policy Link',
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.edit),
+                              onPressed: () => _showEditDialog(document),
+                            ),
+                            onTap: () {
+                              if (data['policyLink'] != null) {
+                                _handlePolicyTap(data['policyLink']);
+                              }
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -113,6 +180,7 @@ class _DepartmentsPolicyScreenState extends State<DepartmentsPolicyScreen> {
             children: [
               TextField(
                 controller: policyController,
+                enabled: false,
                 decoration: const InputDecoration(
                   labelText: 'Policy Link',
                   hintText: 'Enter new policy link or upload a file',
